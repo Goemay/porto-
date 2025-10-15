@@ -24,7 +24,7 @@ Built with `React + Vite + Tailwind CSS` — fast, minimal, and fun.
 - 💾 LocalStorage persistence
 - 📱 Responsive design
 - 🎨 Tailwind-based minimal styling
-- 🚀 Easy deploy to GitHub Pages or Vercel
+- 🚀 Easy deploy to GitHub Pages or Vercel  
 
 ---
 
