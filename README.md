@@ -4,13 +4,13 @@
 Built with `React + Vite + Tailwind CSS` — fast, minimal, and fun.
 
 <p align="center">
-  <a href="https://goemay.github.io/porto-jim" target="_blank">🚀 Live Demo</a>
+  <a href="https://goemay.github.io/porto-" target="_blank">🚀 Live Demo</a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/deployments/Goemay/porto-jim/github-pages?label=deployment&logo=github" />
-  <img src="https://img.shields.io/github/package-json/v/Goemay/porto-jim?color=blue" />
-  <img src="https://img.shields.io/github/license/Goemay/porto-jim?color=success" />
+  <img src="https://img.shields.io/github/deployments/Goemay/porto-/github-pages?label=deployment&logo=github" />
+  <img src="https://img.shields.io/github/package-json/v/Goemay/porto-?color=blue" />
+  <img src="https://img.shields.io/github/license/Goemay/porto-?color=success" />
   <img src="https://img.shields.io/badge/built_with-React_|_Vite_|_Tailwind-blueviolet?logo=react" />
 </p>
 
