@@ -1,0 +1,28 @@
+{
+  "name": "porto-jim",
+  "homepage": "https://goemay.github.io/porto.github.io",
+  "version": "0.0.0",
+  "private": true,
+  "description": "My Portfolio Website",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "autoprefixer": "^10.4.21",
+    "gh-pages": "^6.3.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18"
+  },
+  "dependencies": {
+    "framer-motion": "^12.23.22",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
+    "react-scroll": "^1.9.3",
+    "vite": "^7.1.9"
+  }
+}
