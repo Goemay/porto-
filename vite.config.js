@@ -3,6 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/', // 👈 because custom domain points to root
+  base: '/porto-/', // 👈 match your repo name exactly
 })
-
