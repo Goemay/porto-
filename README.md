@@ -34,7 +34,7 @@ Built with `React + Vite + Tailwind CSS` — fast, minimal, and fun.
 |------------|------------------------|
 | Framework  | React + Vite           |
 | Styling    | Tailwind CSS           |
-| Animation  | Framer Motion *(optional)* |
+| Animation  | Framer Motion          |
 | Hosting    | GitHub Pages / Vercel  |
 | Language   | JavaScript (ES6+)      |
 
@@ -102,10 +102,11 @@ You can deploy using:
 | `projects`                 | List portfolio projects                   |
 | `skills`                   | Show skills & tech stack                  |
 | `education`                | Show education info                       |
-| `theme dark / theme light`| Toggle between dark & light mode          |
+| `theme dark / theme light` | Toggle between dark & light mode          |
 | `clear`                    | Clear the console                         |
+| `stack`                    | what tools i use                          |
+| `jim`                      | jim                                       |
 | `shutdown`                 | Exit console and return to main portfolio |
-
 ---
 
 ## 🖼️ Preview
@@ -117,7 +118,7 @@ You can deploy using:
 ## 👨‍💻 Author
 
 **Jim Raihan Gumay**  
-💼 IT Enthusiast | Full-Stack Developer  
+💼 AI Enthusiast | Full-Stack Developer  
 📧 [raihangumay02@gmail.com](mailto:raihangumay02@gmail.com)  
 🔗 [LinkedIn](https://www.linkedin.com/in/jim-raihan)  
 🐙 [GitHub](https://github.com/Goemay)
