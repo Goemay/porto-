@@ -4,14 +4,10 @@ import AppV2 from "./v2/AppV2";
 
 export default function PortfolioSelector() {
   const [version, setVersion] = useState(() => {
-    // Load version from localStorage, default to newest version 2.0.0
-    const saved = localStorage.getItem("portfolioVersion");
-    // If nothing is saved, default to 2.0.0
-    if (!saved) {
-      localStorage.setItem("portfolioVersion", "2.0.0");
-      return "2.0.0";
-    }
-    return saved;
+    // Always default to v2.0.0 as the newest version
+    // Clear any old stored preference to force v2.0.0 on first load
+    localStorage.setItem("portfolioVersion", "2.0.0");
+    return "2.0.0";
   });
 
   const [isOpen, setIsOpen] = useState(false);
