@@ -1,7 +1,7 @@
-# 🧠 Porto-Jim — Interactive Portfolio Console
+# 🧠 Porto-Jim
 
-**Interactive developer portfolio styled as a command-line interface ⚡**  
-Built with `React + Vite + Tailwind CSS` — fast, minimal, and fun.
+**Interactive developer portfolio interface ⚡**  
+Built with `React + Vite + Tailwind CSS + Framer Motion` — fast, modern, and responsive.
 
 <p align="center">
   <a href="https://goemay.github.io/porto-" target="_blank">🚀 Live Demo</a>
@@ -18,13 +18,17 @@ Built with `React + Vite + Tailwind CSS` — fast, minimal, and fun.
 
 ## 🧩 Features
 
-- 🖥️ Terminal-style interface (`help`, `about`, `skills`, `shutdown`, etc.)
-- 🌗 Light/Dark theme toggle via command
+- 🎨 **Dual Portfolio Versions** — v2.0.7 (Modern) & v1.0.4 (CLI Terminal)
+- 🔄 **Version Switcher** — Toggle between versions seamlessly
+- 📱 **Responsive Design** — Works perfectly on desktop and mobile
+- 🎯 **Horizontal Scroll Mode** — Enable/disable side-by-side section scrolling
+- ✨ **Smooth Animations** — Framer Motion for fluid transitions
+- 🖥️ Terminal-style interface with commands (`help`, `about`, `skills`, etc.)
+- 🌗 Light/Dark theme toggle
 - ⌨️ Autocomplete & command history
 - 💾 LocalStorage persistence
-- 📱 Responsive design
-- 🎨 Tailwind-based minimal styling
-- 🚀 Easy deploy to GitHub Pages or Vercel  
+- 📊 Interactive CV & project showcase
+- 🚀 Fast deployment to GitHub Pages  
 
 ---
 
@@ -43,19 +47,30 @@ Built with `React + Vite + Tailwind CSS` — fast, minimal, and fun.
 ## 📁 Folder Structure
 
 ```
-porto-jim/
+porto-/
 ├─ public/
+│  └─ CNAME
 ├─ src/
+│  ├─ pages/
+│  │  └─ App.jsx (v1.0.4 - CLI Terminal)
+│  ├─ v2/
+│  │  └─ AppV2.jsx (v2.0.7 - Modern Portfolio)
 │  ├─ components/
 │  │  ├─ TerminalShell.jsx
-│  │  ├─ CommandParser.js
+│  │  ├─ MatrixBackground.jsx
 │  │  └─ BlinkingCursor.jsx
-│  ├─ App.jsx
-│  └─ main.jsx
+│  ├─ core/
+│  │  └─ CommandParser.js
+│  ├─ PortfolioSelector.jsx (Version Router)
+│  ├─ main.jsx
+│  ├─ index.css
+│  └─ App.css
 ├─ index.html
 ├─ package.json
 ├─ tailwind.config.js
+├─ postcss.config.js
 ├─ vite.config.js
+├─ eslint.config.js
 └─ README.md
 ```
 
@@ -93,7 +108,7 @@ You can deploy using:
 
 ---
 
-## 💻 Available Commands
+## 💻 Available Commands (v1.0.4)
 
 | Command                    | Description                               |
 |----------------------------|-------------------------------------------|
@@ -104,9 +119,16 @@ You can deploy using:
 | `education`                | Show education info                       |
 | `theme dark / theme light` | Toggle between dark & light mode          |
 | `clear`                    | Clear the console                         |
-| `stack`                    | what tools i use                          |
-| `jim`                      | jim                                       |
-| `shutdown`                 | Exit console and return to main portfolio |
+| `stack`                    | View tech stack                           |
+| `shutdown`                 | Exit console and return to portfolio      |
+
+---
+
+## 🎛️ Controls (v2.0.7)
+
+- **Enable/Disable Horizontal** — Toggle side-by-side section scrolling
+- **Version Button (Top-Right)** — Switch between v2.0.7 (Modern) and v1.0.4 (CLI)
+- Responsive layout that adapts to all screen sizes
 ---
 
 ## 🖼️ Preview
@@ -118,10 +140,11 @@ You can deploy using:
 ## 👨‍💻 Author
 
 **Jim Raihan Gumay**  
-💼 AI Enthusiast | Full-Stack Developer  
+💼 Full-Stack Developer | AI Enthusiast  
 📧 [raihangumay02@gmail.com](mailto:raihangumay02@gmail.com)  
 🔗 [LinkedIn](https://www.linkedin.com/in/jim-raihan)  
-🐙 [GitHub](https://github.com/Goemay)
+🐙 [GitHub](https://github.com/Goemay)  
+🌐 [Portfolio](https://jimraihan.my.id)
 
 ---
 
