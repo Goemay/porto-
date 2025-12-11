@@ -4,20 +4,15 @@ import AppV2 from "./v2/AppV2";
 
 export default function PortfolioSelector() {
   const [version, setVersion] = useState(() => {
-    // Load version from localStorage, default to newest version 2.0.0
-    const saved = localStorage.getItem("portfolioVersion");
-    // If nothing is saved, default to 2.0.0
-    if (!saved) {
-      localStorage.setItem("portfolioVersion", "2.0.0");
-      return "2.0.0";
-    }
-    return saved;
+    // Always force 2.0.7 as default on every page load
+    localStorage.setItem("portfolioVersion", "2.0.7");
+    return "2.0.7";
   });
 
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Save version preference
+    // Save version preference when user switches versions via button
     localStorage.setItem("portfolioVersion", version);
   }, [version]);
 
@@ -28,7 +23,7 @@ export default function PortfolioSelector() {
 
   return (
     <>
-      {/* Version Dropdown - Fixed Position Top Right */}
+      {/* Version Dropdown - always visible, not just on v1 */}
       <div className="fixed top-6 right-6 z-50">
         <div className="relative inline-block">
           {/* Main Button - Theme changes based on current version */}
@@ -52,14 +47,14 @@ export default function PortfolioSelector() {
                 : "border border-blue-500"
             }`}>
               <button
-                onClick={() => handleVersionChange("2.0.0")}
-                className={`block w-full text-left px-4 py-2 text-sm transition-all duration-200 ${
-                  version === "2.0.0"
+                onClick={() => handleVersionChange("2.0.7")}
+                className={`block w-full text-left px-4 py-2 text-sm transition-all ${
+                  version === "2.0.7"
                     ? "bg-blue-500/20 text-blue-400 border-b border-blue-500"
                     : "text-gray-400 hover:bg-blue-500/10 border-b border-gray-700"
                 }`}
               >
-                v2.0.0 - Modern
+                v2.0.7 - Modern
               </button>
               <button
                 onClick={() => handleVersionChange("1.0.4")}

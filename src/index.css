@@ -32,7 +32,7 @@ body {
   color: var(--terminal-text);
   font-family: 'Courier New', monospace;
   margin: 0;
-  overflow-x: hidden; /* allow vertical scroll */
+  overflow-x: hidden; /* default: no horizontal scroll */
   overflow-y: auto;
 }
 
@@ -130,4 +130,34 @@ body {
   top: 1rem;
   z-index: 9999;
   pointer-events: auto;
+}
+
+/* Horizontal scroll mode: enable side-way scrolling layout */
+.horizontal-mode {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+.horizontal-mode .site-inner {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: flex-start;
+  padding-bottom: 2rem;
+}
+
+.horizontal-mode .site-inner > section {
+  min-width: 85vw;
+  max-width: 95vw;
+  flex: 0 0 auto;
+}
+
+/* small adjustments to ensure scroll bar visibility */
+.horizontal-mode ::-webkit-scrollbar {
+  height: 10px;
+}
+
+.horizontal-mode ::-webkit-scrollbar-thumb {
+  background: #00ff66;
+  border-radius: 5px;
 }

@@ -1,7 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 export default function AppV2() {
+  const [version, setVersion] = useState(() => {
+    try {
+      return localStorage.getItem("portfolioVersion") || "2.0.7";
+    } catch (e) {
+      return "2.0.7";
+    }
+  });
+
+  const [horizontalMode, setHorizontalMode] = useState(() => {
+    try {
+      return localStorage.getItem("horizontalMode") === "true";
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const [versionDropdownOpen, setVersionDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    // apply/remove body class for horizontal mode
+    if (horizontalMode) {
+      document.body.classList.add("horizontal-mode");
+    } else {
+      document.body.classList.remove("horizontal-mode");
+    }
+    try {
+      localStorage.setItem("horizontalMode", horizontalMode ? "true" : "false");
+    } catch (e) {}
+  }, [horizontalMode]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("portfolioVersion", version);
+    } catch (e) {}
+  }, [version]);
+
+  const toggleHorizontal = () => {
+    setHorizontalMode((v) => !v);
+  };
+
+  const handleVersionChange = (newVersion) => {
+    setVersion(newVersion);
+    setVersionDropdownOpen(false);
+    try {
+      localStorage.setItem("portfolioVersion", newVersion);
+    } catch (e) {}
+    window.location.reload();
+  };
+
   return (
     <div className="min-h-screen bg-white text-gray-900 flex flex-col items-center justify-center px-6 overflow-auto" style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db #f3f4f6" }}>
       <style>{`
@@ -20,55 +69,51 @@ export default function AppV2() {
         }
       `}</style>
 
-      {/* Main Content */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="text-center max-w-3xl py-20"
-      >
-        <h1 className="text-6xl md:text-8xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
-          Jim Raihan Gumay
-        </h1>
+      {/* Header with horizontal toggle only */}
+      <header className="w-full max-w-6xl mx-auto py-4 flex justify-end items-center gap-4">
+        <button onClick={toggleHorizontal} className={`px-3 py-2 rounded-lg border ${horizontalMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'}`}>
+          {horizontalMode ? 'Disable Horizontal' : 'Enable Horizontal'}
+        </button>
+      </header>
 
-        <div className="h-1 w-48 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto mb-8 rounded-full"></div>
-
-        <p className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-          Software Engineer | Full-Stack Developer
-        </p>
-
-        <p className="text-lg text-gray-600 mb-12 leading-relaxed">
-          Passionate about building elegant solutions and creating beautiful digital experiences.
-        </p>
-
-        {/* Quick Links */}
-        <div className="flex flex-wrap gap-4 justify-center mb-16">
-          <a
-            href="#"
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 hover:shadow-lg transition-all duration-300"
+      {/* Main Content - sections will sit side-by-side when horizontalMode is enabled */}
+      <div className="site-inner w-full max-w-6xl mx-auto py-8">
+        <section>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-left p-8"
           >
-            Projects
-          </a>
-          <a
-            href="#"
-            className="px-8 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 hover:shadow-lg transition-all duration-300"
-          >
-            About
-          </a>
-          <a
-            href="#"
-            className="px-8 py-3 bg-pink-600 text-white rounded-lg font-semibold hover:bg-pink-700 hover:shadow-lg transition-all duration-300"
-          >
-            Contact
-          </a>
-        </div>
+            <h1 className="text-4xl md:text-6xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
+              Jim Raihan Gumay
+            </h1>
 
-        {/* Footer Info */}
-        <div className="text-sm text-gray-500">
-          <p>Welcome to my portfolio website</p>
-          <p>Portfolio Version: 2.0.0</p>
-        </div>
-      </motion.div>
+            <div className="h-1 w-40 bg-gradient-to-r from-blue-600 to-purple-600 mb-6 rounded-full"></div>
+
+            <p className="text-xl md:text-2xl font-bold text-gray-800 mb-3">Software Engineer | Full-Stack Developer</p>
+            <p className="text-base text-gray-600 mb-6 leading-relaxed">Passionate about building elegant solutions and creating beautiful digital experiences.</p>
+            <div className="flex gap-4">
+              <a href="#" className="px-6 py-2 bg-blue-600 text-white rounded">Projects</a>
+              <a href="#" className="px-6 py-2 bg-purple-600 text-white rounded">About</a>
+            </div>
+          </motion.div>
+        </section>
+
+        <section>
+          <div className="p-8 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-3">About / CV</h2>
+            <p className="text-gray-700">This section can contain your detailed CV and other content. When horizontal mode is enabled, sections will appear side-by-side and the page will scroll horizontally.</p>
+          </div>
+        </section>
+
+        <section>
+          <div className="p-8 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-3">Contact & Footer</h2>
+            <p className="text-gray-700">Email: raihangumay02@gmail.com</p>
+          </div>
+        </section>
+      </div>
 
       {/* Animated Background Elements */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
