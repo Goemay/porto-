@@ -2,23 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 60s linear infinite;
-}
-
-@keyframes gridMove {
-  from { background-position: 0 0; }
-  to { background-position: 40px 40px; }
-}
-
-.animate-gridMove {
-  animation: gridMove 10s linear infinite;
-}
 /* === TERMINAL THEME (Retro Green CMD Style) === */
 :root {
   --terminal-bg: #000;
@@ -32,18 +15,8 @@ body {
   color: var(--terminal-text);
   font-family: 'Courier New', monospace;
   margin: 0;
-  overflow-x: hidden; /* default: no horizontal scroll */
+  overflow-x: hidden;
   overflow-y: auto;
-}
-
-
-/* Terminal window border */
-.terminal-container {
-  border: 1px solid var(--terminal-border);
-  box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
-  background-color: #000;
-  color: var(--terminal-text);
-  scrollbar-color: var(--terminal-text) var(--terminal-bg);
 }
 
 /* === Custom Scrollbar (Green CMD style) === */
@@ -68,96 +41,4 @@ body {
 ::selection {
   background: #00ff66;
   color: #000;
-}
-
-/* Terminal prompt and command lines */
-.prompt {
-  color: var(--terminal-text);
-}
-
-/* Optional: blinking cursor */
-.cursor {
-  color: var(--terminal-text);
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  from, to {
-    color: transparent;
-  }
-  50% {
-    color: var(--terminal-text);
-  }
-}
-
-/* island header (minimized floating header) */
-.island-header {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 1rem; /* matches top-4 */
-  z-index: 9999;
-  pointer-events: auto;
-  transition: transform 220ms cubic-bezier(.2,.9,.25,1), opacity 180ms ease;
-  will-change: transform, opacity;
-}
-
-.island-header-inner {
-  background: rgba(0,0,0,0.72);
-  border: 1px solid rgba(16,185,129,0.14); /* green border */
-  color: #9ff7c9;
-  padding: 0.4rem 0.75rem;
-  border-radius: 9999px;
-  display: inline-flex;
-  gap: 0.5rem;
-  align-items: center;
-  box-shadow: 0 6px 30px rgba(0,255,140,0.06);
-  backdrop-filter: blur(6px);
-  font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, "Courier New", monospace;
-  font-size: 0.9rem;
-}
-
-/* small responsive adjustments */
-@media (max-width: 640px) {
-  .island-header { top: 0.6rem; }
-  .island-header-inner { padding: 0.35rem 0.6rem; font-size: 0.82rem; }
-}
-
-.island-force {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 1rem;
-  z-index: 9999;
-  pointer-events: auto;
-}
-
-/* Horizontal scroll mode: enable side-way scrolling layout */
-.horizontal-mode {
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-}
-
-.horizontal-mode .site-inner {
-  display: flex;
-  flex-direction: row;
-  gap: 2rem;
-  align-items: flex-start;
-  padding-bottom: 2rem;
-}
-
-.horizontal-mode .site-inner > section {
-  min-width: 85vw;
-  max-width: 95vw;
-  flex: 0 0 auto;
-}
-
-/* small adjustments to ensure scroll bar visibility */
-.horizontal-mode ::-webkit-scrollbar {
-  height: 10px;
-}
-
-.horizontal-mode ::-webkit-scrollbar-thumb {
-  background: #00ff66;
-  border-radius: 5px;
 }
