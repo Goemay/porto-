@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaGithub, FaLinkedin, FaInstagram, FaYoutube, FaTwitch, FaDiscord } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
 
 // ── Static data (outside component — no useMemo needed) ───────────────────────
 const PROFILE = {
@@ -152,7 +154,7 @@ function SectionLabel({ children }) {
   return (
     <div className="flex items-center gap-3 mb-6">
       <span className="block w-6 h-px bg-[#c8974a]" />
-      <p className="uppercase text-[10px] tracking-[0.3em] text-[#9a7c5a] font-sans font-semibold">
+      <p className="uppercase text-sm tracking-[0.2em] text-[#9a7c5a] font-sans font-semibold">
         {children}
       </p>
     </div>
@@ -185,14 +187,175 @@ function BulletList({ items }) {
   );
 }
 
+// ── Social header icons ────────────────────────────────────────────────────────
+const SOCIAL_LINKS = [
+  {
+    Icon: FaGithub,
+    href: "https://github.com/Goemay",
+    label: "GitHub",
+  },
+  {
+    Icon: FaLinkedin,
+    href: "https://www.linkedin.com/in/jim-raihan/",
+    label: "LinkedIn",
+  },
+  {
+    Icon: MdEmail,
+    href: "mailto:raihangumay02@gmail.com",
+    label: "Email",
+  },
+];
+
+function SocialLinks() {
+  return (
+    <div className="flex items-center gap-1.5">
+      {SOCIAL_LINKS.map(({ Icon, href, label }, i) => (
+        <motion.a
+          key={label}
+          href={href}
+          target={href.startsWith("mailto") ? undefined : "_blank"}
+          rel="noopener noreferrer"
+          aria-label={label}
+          title={label}
+          initial={{ opacity: 0, scale: 0, rotate: -20 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{
+            type: "spring",
+            stiffness: 360,
+            damping: 18,
+            delay: 0.4 + i * 0.12,
+          }}
+          whileHover={{
+            scale: 1.3,
+            y: -4,
+            transition: { type: "spring", stiffness: 500, damping: 14 },
+          }}
+          whileTap={{ scale: 0.82 }}
+          className="w-8 h-8 flex items-center justify-center rounded-full
+                     text-[#9a7c5a] hover:text-[#c8974a] transition-colors duration-200"
+          style={{ willChange: "transform" }}
+        >
+          <Icon size={17} />
+        </motion.a>
+      ))}
+    </div>
+  );
+}
+
+// ── Rotating social button (cycles IG → YT → Twitch → Discord every 4s) ──────
+const ROTATING_SOCIALS = [
+  { Icon: FaInstagram, label: "Instagram", href: "#instagram" }, // ← update with your URL
+  { Icon: FaYoutube,   label: "YouTube",   href: "#youtube"   }, // ← update with your URL
+  { Icon: FaTwitch,    label: "Twitch",    href: "#twitch"    }, // ← update with your URL
+  { Icon: FaDiscord,   label: "Discord",   href: "#discord"   }, // ← update with your URL
+];
+
+function RotatingSocial() {
+  const [idx, setIdx]         = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const collapseRef           = useRef(null);
+
+  useEffect(() => {
+    if (hovered) return;
+    const t = setInterval(() => setIdx(i => (i + 1) % ROTATING_SOCIALS.length), 4000);
+    return () => clearInterval(t);
+  }, [hovered]);
+
+  const onEnter = () => { clearTimeout(collapseRef.current); setHovered(true); };
+  const onLeave = () => { collapseRef.current = setTimeout(() => setHovered(false), 1000); };
+
+  const CycleIcon = ROTATING_SOCIALS[idx].Icon;
+  const iconCls   = "w-8 h-8 flex items-center justify-center text-[#9a7c5a] hover:text-[#c8974a] transition-colors duration-200 relative z-10";
+  const iconMotion = {
+    whileHover: { scale: 1.28, y: -3, transition: { type: "spring", stiffness: 500, damping: 14 } },
+    whileTap:   { scale: 0.82 },
+    style:      { willChange: "transform" },
+  };
+
+  return (
+    <motion.div
+      layout
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      className="relative flex items-center"
+      style={{ padding: "4px", borderRadius: 9999 }}
+      transition={{ layout: { type: "spring", stiffness: 340, damping: 28 } }}
+    >
+      {/* ── Dynamic Island background — oily morphic pill ── */}
+      <motion.span
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{ borderRadius: 9999 }}
+        animate={{
+          opacity:         hovered ? 1 : 0,
+          backgroundColor: hovered ? "rgba(8, 6, 4, 0.13)" : "rgba(8, 6, 4, 0)",
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      />
+
+      {/* ── Icons ── */}
+      <AnimatePresence mode="wait">
+        {hovered ? (
+          /* Expanded: slides in from right, slides out to left */
+          <motion.div
+            key="expanded"
+            className="flex items-center gap-0.5 px-2"
+            initial={{ opacity: 0, x: 28 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -24, transition: { type: "spring", stiffness: 400, damping: 30 } }}
+            transition={{ type: "spring", stiffness: 380, damping: 26 }}
+          >
+            {ROTATING_SOCIALS.map(({ Icon, href, label }, i) => (
+              <motion.a
+                key={label}
+                href={href}
+                target={href.startsWith("#") ? undefined : "_blank"}
+                rel="noopener noreferrer"
+                aria-label={label}
+                title={label}
+                initial={{ opacity: 0, x: 16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ type: "spring", stiffness: 400, damping: 22, delay: i * 0.08 }}
+                className={iconCls}
+                {...iconMotion}
+              >
+                <Icon size={17} />
+              </motion.a>
+            ))}
+          </motion.div>
+
+        ) : (
+          /* Collapsed: single cycling icon — slides right in, left out */
+          <motion.a
+            key={`cycle-${idx}`}
+            href={ROTATING_SOCIALS[idx].href}
+            target={ROTATING_SOCIALS[idx].href.startsWith("#") ? undefined : "_blank"}
+            rel="noopener noreferrer"
+            aria-label={ROTATING_SOCIALS[idx].label}
+            title={ROTATING_SOCIALS[idx].label}
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{    opacity: 0, x: -12 }}
+            transition={{ type: "spring", stiffness: 400, damping: 22 }}
+            className={iconCls}
+            {...iconMotion}
+          >
+            <CycleIcon size={17} />
+          </motion.a>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
 // ── Git commit calendar widget ──────────────────────────────────────────────
 // __GIT_LOG__ and __GIT_LAST_DATE__ are injected by Vite at build/dev time
 // from the real git log — no manual updates needed.
-const COMMIT_LOG  = __GIT_LOG__;
-const LAST_DATE   = __GIT_LAST_DATE__;
+const COMMIT_LOG = __GIT_LOG__;
+const LAST_DATE = __GIT_LAST_DATE__;
 
-const CAL_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-const CAL_DAYS   = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+const CAL_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const CAL_DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 // Derive default month/year from the most recent commit date
 function parseLastDate() {
@@ -204,9 +367,9 @@ function parseLastDate() {
 
 function CommitCalendar() {
   const [open, setOpen] = useState(false);
-  const [cur, setCur]   = useState(parseLastDate);
+  const [cur, setCur] = useState(parseLastDate);
 
-  const firstDay    = new Date(cur.y, cur.m, 1).getDay();
+  const firstDay = new Date(cur.y, cur.m, 1).getDay();
   const daysInMonth = new Date(cur.y, cur.m + 1, 0).getDate();
   const cells = [
     ...Array(firstDay).fill(null),
@@ -216,8 +379,8 @@ function CommitCalendar() {
   const toKey = (d) =>
     `${cur.y}-${String(cur.m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
-  const prev = () => setCur(({ y, m }) => m === 0  ? { y: y - 1, m: 11 } : { y, m: m - 1 });
-  const next = () => setCur(({ y, m }) => m === 11 ? { y: y + 1, m: 0  } : { y, m: m + 1 });
+  const prev = () => setCur(({ y, m }) => m === 0 ? { y: y - 1, m: 11 } : { y, m: m - 1 });
+  const next = () => setCur(({ y, m }) => m === 11 ? { y: y + 1, m: 0 } : { y, m: m + 1 });
 
   const monthEntries = Object.entries(COMMIT_LOG).filter(([date]) => {
     const [y, m] = date.split("-").map(Number);
@@ -249,109 +412,87 @@ function CommitCalendar() {
         Updated {LAST_DATE}
       </span>
 
-      {/* Calendar popup — Genie effect (macOS dock animation via clip-path morph) */}
+      {/* Calendar popup — spring scale animation */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{
-              opacity: 0,
-              clipPath: "polygon(35% 100%, 65% 100%, 65% 100%, 35% 100%)",
-              scaleX: 0.25,
-              y: 16,
-            }}
-            animate={{
-              opacity: [0, 0.5, 1, 1],
-              clipPath: [
-                "polygon(35% 100%, 65% 100%, 65% 100%, 35% 100%)", // pinched line
-                "polygon(5% 58%, 95% 58%, 68% 100%, 32% 100%)",    // top opens, bottom narrow
-                "polygon(0% 18%, 100% 18%, 72% 100%, 28% 100%)",   // top almost full, waist visible
-                "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",     // fully open
-              ],
-              scaleX: [0.25, 0.82, 0.97, 1],
-              y: [16, 7, 1, 0],
-            }}
-            exit={{
-              opacity: 0,
-              clipPath: "polygon(35% 100%, 65% 100%, 65% 100%, 35% 100%)",
-              scaleX: 0.25,
-              y: 16,
-              transition: { duration: 0.25, ease: [0.64, 0, 0.78, 0] },
-            }}
+            initial={{ opacity: 0, scale: 0.6, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.6, y: 8 }}
             transition={{
-              duration: 0.48,
-              times: [0, 0.3, 0.7, 1],
-              ease: [0.16, 1, 0.3, 1],
+              type: "spring",
+              stiffness: 420,
+              damping: 26,
+              mass: 0.75,
             }}
             style={{
-              transformOrigin: "bottom center",
-              overflow: "hidden",
+              transformOrigin: "bottom left",
               fontFamily: "'IBM Plex Sans', sans-serif",
             }}
             className="absolute bottom-full left-0 mb-2 z-50 w-56 rounded-2xl border border-[#e0d0bb] bg-[#fdfbf7] shadow-[0_8px_32px_rgba(0,0,0,0.12)] p-3 select-none"
           >
-          {/* Month navigation */}
-          <div className="flex items-center justify-between mb-2.5">
-            <button
-              onClick={prev}
-              className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-[#f0e8da] text-[#9a7c5a] hover:text-[#c8974a] text-sm transition-colors"
-            >‹</button>
-            <span className="text-[11px] font-semibold text-[#3d3326]">
-              {CAL_MONTHS[cur.m]} {cur.y}
-            </span>
-            <button
-              onClick={next}
-              className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-[#f0e8da] text-[#9a7c5a] hover:text-[#c8974a] text-sm transition-colors"
-            >›</button>
-          </div>
+            {/* Month navigation */}
+            <div className="flex items-center justify-between mb-2.5">
+              <button
+                onClick={prev}
+                className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-[#f0e8da] text-[#9a7c5a] hover:text-[#c8974a] text-sm transition-colors"
+              >‹</button>
+              <span className="text-[11px] font-semibold text-[#3d3326]">
+                {CAL_MONTHS[cur.m]} {cur.y}
+              </span>
+              <button
+                onClick={next}
+                className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-[#f0e8da] text-[#9a7c5a] hover:text-[#c8974a] text-sm transition-colors"
+              >›</button>
+            </div>
 
-          {/* Day-name row */}
-          <div className="grid grid-cols-7 mb-1">
-            {CAL_DAYS.map(d => (
-              <div key={d} className="text-center text-[9px] text-[#b09a7a] font-semibold py-0.5">{d}</div>
-            ))}
-          </div>
+            {/* Day-name row */}
+            <div className="grid grid-cols-7 mb-1">
+              {CAL_DAYS.map(d => (
+                <div key={d} className="text-center text-[9px] text-[#b09a7a] font-semibold py-0.5">{d}</div>
+              ))}
+            </div>
 
-          {/* Day cells */}
-          <div className="grid grid-cols-7 gap-y-0.5">
-            {cells.map((day, i) => {
-              if (!day) return <div key={i} />;
-              const commits = COMMIT_LOG[toKey(day)];
-              return (
-                <div key={i} className="flex justify-center py-0.5">
-                  <div className={`relative w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-medium transition-colors ${
-                    commits
+            {/* Day cells */}
+            <div className="grid grid-cols-7 gap-y-0.5">
+              {cells.map((day, i) => {
+                if (!day) return <div key={i} />;
+                const commits = COMMIT_LOG[toKey(day)];
+                return (
+                  <div key={i} className="flex justify-center py-0.5">
+                    <div className={`relative w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-medium transition-colors ${commits
                       ? "bg-[#c8974a] text-white"
                       : "text-[#5a4e3c] hover:bg-[#f0e8da]"
-                  }`}>
-                    {day}
-                    {commits && commits.length > 1 && (
-                      <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-[#8a5e28] text-white text-[7px] rounded-full flex items-center justify-center font-bold">
-                        {commits.length}
-                      </span>
-                    )}
+                      }`}>
+                      {day}
+                      {commits && commits.length > 1 && (
+                        <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-[#8a5e28] text-white text-[7px] rounded-full flex items-center justify-center font-bold">
+                          {commits.length}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
 
-          {/* Commit list */}
-          <div className="mt-2.5 pt-2 border-t border-[#ede5d8]">
-            <p className="text-[8px] font-semibold uppercase tracking-[0.12em] text-[#b09a7a] mb-1.5">
-              {totalCommits > 0 ? `${totalCommits} commits` : "No commits this month"}
-            </p>
-            {monthEntries.flatMap(([, commits]) =>
-              commits.slice(0, 5).map((msg, i) => (
-                <div key={i} className="flex items-start gap-1.5 mb-1">
-                  <span className="w-1 h-1 mt-1 rounded-full bg-[#c8974a] shrink-0" />
-                  <span className="text-[9px] text-[#5a4e3c] leading-tight line-clamp-1">{msg}</span>
-                </div>
-              ))
-            )}
-            {totalCommits > 5 && (
-              <p className="text-[9px] text-[#b09a7a] italic">+{totalCommits - 5} more</p>
-            )}
-          </div>
+            {/* Commit list */}
+            <div className="mt-2.5 pt-2 border-t border-[#ede5d8]">
+              <p className="text-[8px] font-semibold uppercase tracking-[0.12em] text-[#b09a7a] mb-1.5">
+                {totalCommits > 0 ? `${totalCommits} commits` : "No commits this month"}
+              </p>
+              {monthEntries.flatMap(([, commits]) =>
+                commits.slice(0, 5).map((msg, i) => (
+                  <div key={i} className="flex items-start gap-1.5 mb-1">
+                    <span className="w-1 h-1 mt-1 rounded-full bg-[#c8974a] shrink-0" />
+                    <span className="text-[9px] text-[#5a4e3c] leading-tight line-clamp-1">{msg}</span>
+                  </div>
+                ))
+              )}
+              {totalCommits > 5 && (
+                <p className="text-[9px] text-[#b09a7a] italic">+{totalCommits - 5} more</p>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -480,9 +621,8 @@ export default function AppV2() {
 
   return (
     <div
-      className={`v2-app bg-[#f7f4ee] text-[#101010] ${
-        isDesktop ? "h-screen overflow-hidden flex flex-col" : "min-h-screen"
-      }`}
+      className={`v2-app bg-[#f7f4ee] text-[#101010] ${isDesktop ? "h-screen overflow-hidden flex flex-col" : "min-h-screen"
+        }`}
     >
       {/* Scoped scrollbar styling */}
       <style>{`
@@ -495,19 +635,19 @@ export default function AppV2() {
       `}</style>
 
       {/* ── Header ── */}
-      {/* Header — right side intentionally empty (version button is fixed top-right via PortfolioSelector) */}
-      <header className="shrink-0 w-full px-6 md:px-10 py-5">
-        <span className="font-semibold text-sm tracking-wide">jimraihan.my.id</span>
+      <header className="shrink-0 w-full px-6 md:px-10 py-5 flex items-center gap-1">
+        <span className="font-semibold text-sm tracking-wide mr-1">jimraihan.my.id</span>
+        <SocialLinks />
+        <RotatingSocial />
       </header>
 
       {/* ── Scrollable area ── */}
       <div
         ref={scrollerRef}
-        className={`v2-scroller ${
-          isDesktop
-            ? "flex flex-1 overflow-x-auto overflow-y-hidden cursor-grab active:cursor-grabbing"
-            : "flex flex-col overflow-x-hidden"
-        }`}
+        className={`v2-scroller ${isDesktop
+          ? "flex flex-1 overflow-x-auto overflow-y-hidden cursor-grab active:cursor-grabbing"
+          : "flex flex-col overflow-x-hidden"
+          }`}
         style={{ overscrollBehaviorX: "contain" }}
         onMouseDown={isDesktop ? (e) => onDragStart(e.pageX) : undefined}
         onMouseLeave={isDesktop ? onDragEnd : undefined}
@@ -564,14 +704,14 @@ export default function AppV2() {
           <div className="grid gap-4 sm:grid-cols-2">
             {CAREER.map((item, idx) => (
               <Card key={`${item.org}-${idx}`} delay={idx * 0.08}>
-                <span className="text-[10px] text-[#c8974a] uppercase tracking-[0.2em] font-sans font-semibold">
+                <span className="text-xs text-[#c8974a] uppercase tracking-[0.2em] font-sans font-semibold">
                   {item.year}
                 </span>
-                <h2 className="text-base font-bold mt-1.5 leading-snug">{item.title}</h2>
-                <div className="text-xs text-[#6a5f4b] font-sans mt-0.5">
+                <h2 className="text-2xl font-bold mt-2 leading-snug">{item.title}</h2>
+                <div className="text-sm text-[#6a5f4b] font-sans mt-1">
                   {item.org} &middot; {item.type}
                 </div>
-                <div className="text-[10px] text-[#8b7a64] font-sans mt-0.5">{item.location}</div>
+                <div className="text-xs text-[#8b7a64] font-sans mt-0">{item.location}</div>
                 <BulletList items={item.bullets} />
               </Card>
             ))}
@@ -587,11 +727,11 @@ export default function AppV2() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {PROJECTS.map((item, idx) => (
               <Card key={`${item.name}-${idx}`} delay={idx * 0.07}>
-                <span className="text-[10px] text-[#c8974a] uppercase tracking-[0.2em] font-sans font-semibold">
+                <span className="text-xs text-[#c8974a] uppercase tracking-[0.2em] font-sans font-semibold">
                   {item.year}
                 </span>
-                <h3 className="text-sm font-bold mt-1.5 leading-snug">{item.name}</h3>
-                <div className="text-xs text-[#6a5f4b] font-sans mt-0.5">{item.org}</div>
+                <h3 className="text-base font-bold mt-2 leading-snug">{item.name}</h3>
+                <div className="text-sm text-[#6a5f4b] font-sans mt-0.5">{item.org}</div>
                 <BulletList items={item.bullets} />
               </Card>
             ))}
@@ -607,11 +747,11 @@ export default function AppV2() {
           <div className="grid gap-4">
             {EDUCATION.map((item, idx) => (
               <Card key={`${item.school}-${idx}`} delay={idx * 0.1}>
-                <span className="text-[10px] text-[#c8974a] uppercase tracking-[0.2em] font-sans font-semibold">
+                <span className="text-xs text-[#c8974a] uppercase tracking-[0.2em] font-sans font-semibold">
                   {item.year}
                 </span>
-                <h3 className="text-base font-bold mt-1.5">{item.school}</h3>
-                <div className="text-xs text-[#6a5f4b] font-sans mt-0.5">{item.program}</div>
+                <h3 className="text-xl font-bold mt-2">{item.school}</h3>
+                <div className="text-sm text-[#6a5f4b] font-sans mt-1">{item.program}</div>
                 <BulletList items={item.details} />
               </Card>
             ))}
@@ -653,11 +793,10 @@ export default function AppV2() {
                 key={label}
                 onClick={() => scrollToSection(i)}
                 title={label}
-                className={`rounded-full transition-all duration-300 ${
-                  activeSection === i
-                    ? "w-6 h-2 bg-[#c8974a]"
-                    : "w-2 h-2 bg-[#d4c4ad] hover:bg-[#b09a7a]"
-                }`}
+                className={`rounded-full transition-all duration-300 ${activeSection === i
+                  ? "w-6 h-2 bg-[#c8974a]"
+                  : "w-2 h-2 bg-[#d4c4ad] hover:bg-[#b09a7a]"
+                  }`}
               />
             ))}
           </div>
