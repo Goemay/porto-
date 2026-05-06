@@ -185,6 +185,138 @@ function BulletList({ items }) {
   );
 }
 
+// ── Git commit calendar widget ──────────────────────────────────────────────
+const COMMIT_LOG = {
+  "2026-01-05": [
+    "initial portfolio setup",
+    "upd dist",
+  ],
+  "2026-05-06": [
+    "chore(index.css): remove unused CSS classes",
+    "feat(index.html): add SEO and OG meta tags",
+    "refactor(MatrixBackground): plain canvas element",
+    "fix(TerminalShell): lazy localStorage initializer",
+    "refactor(App.jsx): move data arrays outside component",
+    "feat(PortfolioSelector): themed version switcher",
+    "feat(AppV2): full responsive redesign",
+    "chore(config): update eslint flat config",
+    "feat(AppV2): IBM Plex Sans font",
+    "feat(favicon): GitHub avatar as favicon",
+  ],
+};
+
+const CAL_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const CAL_DAYS   = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+
+function CommitCalendar() {
+  const [open, setOpen] = useState(false);
+  const [cur, setCur]   = useState({ y: 2026, m: 4 }); // May 2026 (month 0-indexed)
+
+  const firstDay    = new Date(cur.y, cur.m, 1).getDay();
+  const daysInMonth = new Date(cur.y, cur.m + 1, 0).getDate();
+  const cells = [
+    ...Array(firstDay).fill(null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ];
+
+  const toKey = (d) =>
+    `${cur.y}-${String(cur.m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
+  const prev = () => setCur(({ y, m }) => m === 0  ? { y: y - 1, m: 11 } : { y, m: m - 1 });
+  const next = () => setCur(({ y, m }) => m === 11 ? { y: y + 1, m: 0  } : { y, m: m + 1 });
+
+  const monthEntries = Object.entries(COMMIT_LOG).filter(([date]) => {
+    const [y, m] = date.split("-").map(Number);
+    return y === cur.y && m - 1 === cur.m;
+  });
+  const totalCommits = monthEntries.reduce((s, [, c]) => s + c.length, 0);
+
+  return (
+    <div
+      className="relative inline-block"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      {/* Trigger — invisible bg, just the text with a subtle dotted underline */}
+      <span className="text-xs text-[#9a7c5a] cursor-default border-b border-dotted border-[#c8974a]/50 pb-px">
+        Updated February 3, 2026
+      </span>
+
+      {/* Calendar popup */}
+      {open && (
+        <div
+          className="absolute bottom-full left-0 mb-2 z-50 w-56 rounded-2xl border border-[#e0d0bb] bg-[#fdfbf7] shadow-[0_8px_32px_rgba(0,0,0,0.12)] p-3 select-none"
+          style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}
+        >
+          {/* Month navigation */}
+          <div className="flex items-center justify-between mb-2.5">
+            <button
+              onClick={prev}
+              className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-[#f0e8da] text-[#9a7c5a] hover:text-[#c8974a] text-sm transition-colors"
+            >‹</button>
+            <span className="text-[11px] font-semibold text-[#3d3326]">
+              {CAL_MONTHS[cur.m]} {cur.y}
+            </span>
+            <button
+              onClick={next}
+              className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-[#f0e8da] text-[#9a7c5a] hover:text-[#c8974a] text-sm transition-colors"
+            >›</button>
+          </div>
+
+          {/* Day-name row */}
+          <div className="grid grid-cols-7 mb-1">
+            {CAL_DAYS.map(d => (
+              <div key={d} className="text-center text-[9px] text-[#b09a7a] font-semibold py-0.5">{d}</div>
+            ))}
+          </div>
+
+          {/* Day cells */}
+          <div className="grid grid-cols-7 gap-y-0.5">
+            {cells.map((day, i) => {
+              if (!day) return <div key={i} />;
+              const commits = COMMIT_LOG[toKey(day)];
+              return (
+                <div key={i} className="flex justify-center py-0.5">
+                  <div className={`relative w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-medium transition-colors ${
+                    commits
+                      ? "bg-[#c8974a] text-white"
+                      : "text-[#5a4e3c] hover:bg-[#f0e8da]"
+                  }`}>
+                    {day}
+                    {commits && commits.length > 1 && (
+                      <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-[#8a5e28] text-white text-[7px] rounded-full flex items-center justify-center font-bold">
+                        {commits.length}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Commit list */}
+          <div className="mt-2.5 pt-2 border-t border-[#ede5d8]">
+            <p className="text-[8px] font-semibold uppercase tracking-[0.12em] text-[#b09a7a] mb-1.5">
+              {totalCommits > 0 ? `${totalCommits} commits` : "No commits this month"}
+            </p>
+            {monthEntries.flatMap(([, commits]) =>
+              commits.slice(0, 5).map((msg, i) => (
+                <div key={i} className="flex items-start gap-1.5 mb-1">
+                  <span className="w-1 h-1 mt-1 rounded-full bg-[#c8974a] shrink-0" />
+                  <span className="text-[9px] text-[#5a4e3c] leading-tight line-clamp-1">{msg}</span>
+                </div>
+              ))
+            )}
+            {totalCommits > 5 && (
+              <p className="text-[9px] text-[#b09a7a] italic">+{totalCommits - 5} more</p>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 export default function AppV2() {
   const scrollerRef = useRef(null);
@@ -469,7 +601,7 @@ export default function AppV2() {
 
       {/* ── Footer / Nav ── */}
       <footer className="shrink-0 px-6 md:px-10 py-5 flex items-center justify-between">
-        <span className="text-xs text-[#9a7c5a] font-sans">Updated February 3, 2026</span>
+        <CommitCalendar />
 
         {/* Section dot navigation — desktop only */}
         {isDesktop && (
