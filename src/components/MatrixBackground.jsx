@@ -1,6 +1,5 @@
 // src/MatrixBackground.jsx
 import React, { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
 
 export default function MatrixBackground() {
   const canvasRef = useRef(null);
@@ -67,12 +66,9 @@ export default function MatrixBackground() {
   return (
     <>
       {/* Matrix Canvas */}
-      <motion.canvas
+      <canvas
         ref={canvasRef}
         className="fixed inset-0 w-full h-full z-0"
-        initial={{ opacity: 1 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.2, ease: "easeInOut" }}
       />
 
       {/* Glass Blur - fades on scroll */}
