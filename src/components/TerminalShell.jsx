@@ -9,7 +9,7 @@ export default function TerminalShell({ onShutdown }) {
   const scrollRef = useRef(null);
   const [input, setInput] = useState("");
   const [displayLines, setDisplayLines] = useState([]);
-  const [history, setHistory] = useState(
+  const [history, setHistory] = useState(() =>
     JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]")
   );
   const [histIndex, setHistIndex] = useState(null);
