@@ -228,11 +228,11 @@ function CommitCalendar() {
   const timerRef = useRef(null);
 
   const handleEnter = () => {
-    timerRef.current = setTimeout(() => setOpen(true), 700);
+    clearTimeout(timerRef.current);
+    setOpen(true);                                    // instant open
   };
   const handleLeave = () => {
-    clearTimeout(timerRef.current);
-    setOpen(false);
+    timerRef.current = setTimeout(() => setOpen(false), 1000); // 1s before close
   };
 
   return (
