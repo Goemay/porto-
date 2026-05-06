@@ -232,7 +232,10 @@ function CommitCalendar() {
     setOpen(true);                                    // instant open
   };
   const handleLeave = () => {
-    timerRef.current = setTimeout(() => setOpen(false), 1000); // 1s before close
+    timerRef.current = setTimeout(() => {
+      setOpen(false);
+      setCur({ y: new Date().getFullYear(), m: new Date().getMonth() }); // reset to today
+    }, 1000);
   };
 
   return (
