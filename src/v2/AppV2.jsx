@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 // ── Static data (outside component — no useMemo needed) ───────────────────────
 const PROFILE = {
@@ -225,23 +225,46 @@ function CommitCalendar() {
   });
   const totalCommits = monthEntries.reduce((s, [, c]) => s + c.length, 0);
 
+  const timerRef = useRef(null);
+
+  const handleEnter = () => {
+    timerRef.current = setTimeout(() => setOpen(true), 700);
+  };
+  const handleLeave = () => {
+    clearTimeout(timerRef.current);
+    setOpen(false);
+  };
+
   return (
     <div
       className="relative inline-block"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
     >
       {/* Trigger — invisible bg, just the text with a subtle dotted underline */}
       <span className="text-xs text-[#9a7c5a] cursor-default border-b border-dotted border-[#c8974a]/50 pb-px">
         Updated {LAST_DATE}
       </span>
 
-      {/* Calendar popup */}
-      {open && (
-        <div
-          className="absolute bottom-full left-0 mb-2 z-50 w-56 rounded-2xl border border-[#e0d0bb] bg-[#fdfbf7] shadow-[0_8px_32px_rgba(0,0,0,0.12)] p-3 select-none"
-          style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}
-        >
+      {/* Calendar popup — Apple spring animation, scales from bottom-left */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.6, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.6, y: 8 }}
+            transition={{
+              type: "spring",
+              stiffness: 420,
+              damping: 26,
+              mass: 0.75,
+            }}
+            style={{
+              transformOrigin: "bottom left",
+              fontFamily: "'IBM Plex Sans', sans-serif",
+            }}
+            className="absolute bottom-full left-0 mb-2 z-50 w-56 rounded-2xl border border-[#e0d0bb] bg-[#fdfbf7] shadow-[0_8px_32px_rgba(0,0,0,0.12)] p-3 select-none"
+          >
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-2.5">
             <button
@@ -305,8 +328,9 @@ function CommitCalendar() {
               <p className="text-[9px] text-[#b09a7a] italic">+{totalCommits - 5} more</p>
             )}
           </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
