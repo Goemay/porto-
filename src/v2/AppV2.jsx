@@ -249,21 +249,42 @@ function CommitCalendar() {
         Updated {LAST_DATE}
       </span>
 
-      {/* Calendar popup — Apple spring animation, scales from bottom-left */}
+      {/* Calendar popup — Genie effect (macOS dock animation via clip-path morph) */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.6, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.6, y: 8 }}
+            initial={{
+              opacity: 0,
+              clipPath: "polygon(35% 100%, 65% 100%, 65% 100%, 35% 100%)",
+              scaleX: 0.25,
+              y: 16,
+            }}
+            animate={{
+              opacity: [0, 0.5, 1, 1],
+              clipPath: [
+                "polygon(35% 100%, 65% 100%, 65% 100%, 35% 100%)", // pinched line
+                "polygon(5% 58%, 95% 58%, 68% 100%, 32% 100%)",    // top opens, bottom narrow
+                "polygon(0% 18%, 100% 18%, 72% 100%, 28% 100%)",   // top almost full, waist visible
+                "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",     // fully open
+              ],
+              scaleX: [0.25, 0.82, 0.97, 1],
+              y: [16, 7, 1, 0],
+            }}
+            exit={{
+              opacity: 0,
+              clipPath: "polygon(35% 100%, 65% 100%, 65% 100%, 35% 100%)",
+              scaleX: 0.25,
+              y: 16,
+              transition: { duration: 0.25, ease: [0.64, 0, 0.78, 0] },
+            }}
             transition={{
-              type: "spring",
-              stiffness: 420,
-              damping: 26,
-              mass: 0.75,
+              duration: 0.48,
+              times: [0, 0.3, 0.7, 1],
+              ease: [0.16, 1, 0.3, 1],
             }}
             style={{
-              transformOrigin: "bottom left",
+              transformOrigin: "bottom center",
+              overflow: "hidden",
               fontFamily: "'IBM Plex Sans', sans-serif",
             }}
             className="absolute bottom-full left-0 mb-2 z-50 w-56 rounded-2xl border border-[#e0d0bb] bg-[#fdfbf7] shadow-[0_8px_32px_rgba(0,0,0,0.12)] p-3 select-none"
