@@ -306,7 +306,7 @@ export default function AppV2() {
 
   return (
     <div
-      className={`bg-[#f7f4ee] text-[#101010] font-serif ${
+      className={`v2-app bg-[#f7f4ee] text-[#101010] ${
         isDesktop ? "h-screen overflow-hidden flex flex-col" : "min-h-screen"
       }`}
     >
@@ -316,7 +316,8 @@ export default function AppV2() {
         .v2-scroller::-webkit-scrollbar-track { background: #ede8df; }
         .v2-scroller::-webkit-scrollbar-thumb { background: #c5b59b; border-radius: 3px; }
         .v2-scroller::-webkit-scrollbar-thumb:hover { background: #a8916e; }
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+        .v2-app, .v2-app * { font-family: 'IBM Plex Sans', sans-serif !important; }
+        .v2-app h1 { font-weight: 700; }
       `}</style>
 
       {/* ── Header ── */}
