@@ -186,31 +186,25 @@ function BulletList({ items }) {
 }
 
 // ── Git commit calendar widget ──────────────────────────────────────────────
-const COMMIT_LOG = {
-  "2026-01-05": [
-    "initial portfolio setup",
-    "upd dist",
-  ],
-  "2026-05-06": [
-    "chore(index.css): remove unused CSS classes",
-    "feat(index.html): add SEO and OG meta tags",
-    "refactor(MatrixBackground): plain canvas element",
-    "fix(TerminalShell): lazy localStorage initializer",
-    "refactor(App.jsx): move data arrays outside component",
-    "feat(PortfolioSelector): themed version switcher",
-    "feat(AppV2): full responsive redesign",
-    "chore(config): update eslint flat config",
-    "feat(AppV2): IBM Plex Sans font",
-    "feat(favicon): GitHub avatar as favicon",
-  ],
-};
+// __GIT_LOG__ and __GIT_LAST_DATE__ are injected by Vite at build/dev time
+// from the real git log — no manual updates needed.
+const COMMIT_LOG  = __GIT_LOG__;
+const LAST_DATE   = __GIT_LAST_DATE__;
 
 const CAL_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const CAL_DAYS   = ["Su","Mo","Tu","We","Th","Fr","Sa"];
 
+// Derive default month/year from the most recent commit date
+function parseLastDate() {
+  const keys = Object.keys(COMMIT_LOG).sort().reverse();
+  if (!keys.length) return { y: new Date().getFullYear(), m: new Date().getMonth() };
+  const [y, m] = keys[0].split("-").map(Number);
+  return { y, m: m - 1 };
+}
+
 function CommitCalendar() {
   const [open, setOpen] = useState(false);
-  const [cur, setCur]   = useState({ y: 2026, m: 4 }); // May 2026 (month 0-indexed)
+  const [cur, setCur]   = useState(parseLastDate);
 
   const firstDay    = new Date(cur.y, cur.m, 1).getDay();
   const daysInMonth = new Date(cur.y, cur.m + 1, 0).getDate();
@@ -239,7 +233,7 @@ function CommitCalendar() {
     >
       {/* Trigger — invisible bg, just the text with a subtle dotted underline */}
       <span className="text-xs text-[#9a7c5a] cursor-default border-b border-dotted border-[#c8974a]/50 pb-px">
-        Updated February 3, 2026
+        Updated {LAST_DATE}
       </span>
 
       {/* Calendar popup */}
