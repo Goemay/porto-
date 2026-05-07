@@ -244,16 +244,16 @@ function SocialLinks() {
 
 // ── Rotating social button (cycles IG → YT → Twitch → Discord every 4s) ──────
 const ROTATING_SOCIALS = [
-  { Icon: FaInstagram, label: "Instagram", href: "#instagram" }, // ← update with your URL
-  { Icon: FaYoutube,   label: "YouTube",   href: "#youtube"   }, // ← update with your URL
-  { Icon: FaTwitch,    label: "Twitch",    href: "#twitch"    }, // ← update with your URL
-  { Icon: FaDiscord,   label: "Discord",   href: "#discord"   }, // ← update with your URL
+  { Icon: FaInstagram, label: "Instagram", href: "https://www.instagram.com/jimraihann/" }, // ← update with your URL
+  { Icon: FaYoutube, label: "YouTube", href: "https://www.youtube.com/@Goemay11" }, // ← update with your URL
+  { Icon: FaTwitch, label: "Twitch", href: "#twitch" }, // ← update with your URL
+  { Icon: FaDiscord, label: "Discord", href: "#discord" }, // ← update with your URL
 ];
 
 function RotatingSocial() {
-  const [idx, setIdx]         = useState(0);
+  const [idx, setIdx] = useState(0);
   const [hovered, setHovered] = useState(false);
-  const collapseRef           = useRef(null);
+  const collapseRef = useRef(null);
 
   useEffect(() => {
     if (hovered) return;
@@ -265,11 +265,11 @@ function RotatingSocial() {
   const onLeave = () => { collapseRef.current = setTimeout(() => setHovered(false), 1000); };
 
   const CycleIcon = ROTATING_SOCIALS[idx].Icon;
-  const iconCls   = "w-8 h-8 flex items-center justify-center text-[#9a7c5a] hover:text-[#c8974a] transition-colors duration-200 relative z-10";
+  const iconCls = "w-8 h-8 flex items-center justify-center text-[#9a7c5a] hover:text-[#c8974a] transition-colors duration-200 relative z-10";
   const iconMotion = {
     whileHover: { scale: 1.28, y: -3, transition: { type: "spring", stiffness: 500, damping: 14 } },
-    whileTap:   { scale: 0.82 },
-    style:      { willChange: "transform" },
+    whileTap: { scale: 0.82 },
+    style: { willChange: "transform" },
   };
 
   return (
@@ -287,7 +287,7 @@ function RotatingSocial() {
         className="absolute inset-0 pointer-events-none"
         style={{ borderRadius: 9999 }}
         animate={{
-          opacity:         hovered ? 1 : 0,
+          opacity: hovered ? 1 : 0,
           backgroundColor: hovered ? "rgba(8, 6, 4, 0.13)" : "rgba(8, 6, 4, 0)",
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -335,7 +335,7 @@ function RotatingSocial() {
             title={ROTATING_SOCIALS[idx].label}
             initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{    opacity: 0, x: -12 }}
+            exit={{ opacity: 0, x: -12 }}
             transition={{ type: "spring", stiffness: 400, damping: 22 }}
             className={iconCls}
             {...iconMotion}

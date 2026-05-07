@@ -53,7 +53,7 @@ export default function PortfolioSelector() {
   return (
     <>
       {/* ── Version switcher — personality changes per version ── */}
-      <div className="fixed top-4 right-4 z-50" ref={dropdownRef}>
+      <div className="fixed bottom-4 right-4 md:bottom-auto md:top-4 md:right-4 z-50" ref={dropdownRef}>
 
         {/* Trigger button */}
         <button
@@ -89,7 +89,7 @@ export default function PortfolioSelector() {
         {/* Dropdown */}
         {isOpen && (
           <div
-            className={`absolute top-full right-0 mt-2 min-w-[160px] overflow-hidden shadow-xl transition-all ${
+            className={`absolute bottom-full right-0 mb-2 md:bottom-auto md:top-full md:mt-2 md:mb-0 min-w-[160px] overflow-hidden shadow-xl transition-all ${
               isV1
                 ? "bg-[#030d03] border border-green-800 rounded"
                 : "bg-white border border-[#e0d0bb] rounded-2xl"

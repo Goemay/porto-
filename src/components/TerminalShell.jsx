@@ -20,7 +20,7 @@ export default function TerminalShell({ onShutdown }) {
     const welcome = [
       { text: "Welcome to Porto-jim shell — type 'help' for commands", type: "info" },
       {
-        text: "Tip: try `projects`, `about`, `skills`, `contact`, `education`, `cv`, `joke`,  `clear`, `shutdown`,`stack`, `jim`",
+        text: "Tip: try `about`, `work`, `projects`, `skills`, `contact`, `education`, `cv`, `joke`, `stack`, `jim`",
         type: "hint",
       },
     ];
