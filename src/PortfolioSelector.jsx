@@ -5,7 +5,7 @@ import AppV2 from "./v2/AppV2";
 export default function PortfolioSelector() {
   const [version, setVersion] = useState(() => {
     // Always start on v2 on every load
-    return "2.0.7";
+    return "2.1.0";
   });
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -31,7 +31,7 @@ export default function PortfolioSelector() {
       body.style.height = "auto";
     }
     // v2: reset so AppV2's own useEffect can take control
-    if (version === "2.0.7") {
+    if (version === "2.1.0") {
       html.style.overflow = "";
       body.style.overflow = "";
       body.style.height = "";
@@ -97,12 +97,12 @@ export default function PortfolioSelector() {
           >
             {/* V2 option */}
             <button
-              onClick={() => handleVersionChange("2.0.7")}
+              onClick={() => handleVersionChange("2.1.0")}
               className={`w-full text-left px-4 py-3 text-xs transition-all border-b ${
                 isV1
                   ? "font-mono border-green-900/50 text-gray-500 hover:text-green-400 hover:bg-green-950/40"
                   : `font-sans border-[#ede5d8] ${
-                      version === "2.0.7"
+                      version === "2.1.0"
                         ? "text-[#c8974a] bg-[#fdf6ec]"
                         : "text-[#6a5f4b] hover:bg-[#faf5ec]"
                     }`
@@ -116,7 +116,7 @@ export default function PortfolioSelector() {
               ) : (
                 <span className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#c8974a] shrink-0" />
-                  v2.0.7 — Modern
+                  v2.1.0 — Modern
                 </span>
               )}
             </button>
