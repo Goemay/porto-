@@ -210,43 +210,80 @@ const SOCIAL_LINKS = [
 ];
 
 // Tooltip wrapper for social icons
+// The outer plain div owns position:fixed + centering transform.
+// The inner motion.div only handles opacity/scale — keeping Framer Motion
+// from overriding the CSS translateX(-50%) centering.
 function SocialTooltip({ label, desc, children }) {
   const [show, setShow] = useState(false);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const wrapRef = useRef(null);
+
+  const handleEnter = () => {
+    if (wrapRef.current) {
+      const rect = wrapRef.current.getBoundingClientRect();
+      setPos({
+        x: rect.left + rect.width / 2, // horizontal center of icon
+        y: rect.bottom + 8,            // 8px below icon
+      });
+    }
+    setShow(true);
+  };
+
   return (
     <div
+      ref={wrapRef}
       className="relative flex items-center"
-      onMouseEnter={() => setShow(true)}
+      onMouseEnter={handleEnter}
       onMouseLeave={() => setShow(false)}
     >
       {children}
       <AnimatePresence>
         {show && (
-          <motion.div
-            initial={{ opacity: 0, y: -6, scale: 0.92 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.92 }}
-            transition={{ type: "spring", stiffness: 400, damping: 24 }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 pointer-events-none flex flex-col items-center"
+          /* Plain div owns the fixed position — Framer Motion won't touch this */
+          <div
+            className="pointer-events-none flex flex-col items-center"
+            style={{
+              position: "fixed",
+              top: pos.y,
+              left: pos.x,
+              transform: "translateX(-50%)",
+              zIndex: 9999,
+            }}
           >
-            {/* Arrow tip: rotated square — bottom half merges into the box below, no gap */}
-            <div
-              className="w-3 h-3 bg-[#1a1410] rotate-45 -mb-1.5 shrink-0"
-              style={{ zIndex: 10 }}
-            />
-            {/* Tooltip box */}
-            <div
-              className="bg-[#1a1410] text-white rounded-xl px-3 py-2.5 shadow-xl whitespace-nowrap"
-              style={{ zIndex: 20, position: "relative" }}
+            {/* motion.div only animates opacity/scale — no transform conflict */}
+            <motion.div
+              key="tooltip"
+              initial={{ opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.88 }}
+              transition={{ type: "spring", stiffness: 400, damping: 24 }}
+              className="flex flex-col items-center"
+              style={{ transformOrigin: "top center" }}
             >
-              <p className="text-[11px] font-semibold leading-tight">{label}</p>
-              <p className="text-[10px] text-[#c8a86a] leading-tight mt-0.5">{desc}</p>
-            </div>
-          </motion.div>
+              {/* Arrow pointing up toward the icon */}
+              <div
+                style={{
+                  width: 10,
+                  height: 10,
+                  background: "#1a1410",
+                  transform: "rotate(45deg)",
+                  marginBottom: "-5px",
+                  flexShrink: 0,
+                }}
+              />
+              {/* Tooltip box */}
+              <div className="bg-[#1a1410] text-white rounded-xl px-3 py-2.5 shadow-xl whitespace-nowrap">
+                <p className="text-[11px] font-semibold leading-tight">{label}</p>
+                <p className="text-[10px] text-[#c8a86a] leading-tight mt-0.5">{desc}</p>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
   );
 }
+
 
 function SocialLinks() {
   return (
