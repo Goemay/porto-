@@ -193,50 +193,92 @@ const SOCIAL_LINKS = [
     Icon: FaGithub,
     href: "https://github.com/Goemay",
     label: "GitHub",
+    desc: "View my code & projects",
   },
   {
     Icon: FaLinkedin,
     href: "https://www.linkedin.com/in/jim-raihan/",
     label: "LinkedIn",
+    desc: "Connect professionally",
   },
   {
     Icon: MdEmail,
     href: "mailto:raihangumay02@gmail.com",
     label: "Email",
+    desc: "Send me an email",
   },
 ];
+
+// Tooltip wrapper for social icons
+function SocialTooltip({ label, desc, children }) {
+  const [show, setShow] = useState(false);
+  return (
+    <div
+      className="relative flex items-center"
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      {children}
+      <AnimatePresence>
+        {show && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.92 }}
+            transition={{ type: "spring", stiffness: 400, damping: 24 }}
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 pointer-events-none flex flex-col items-center"
+          >
+            {/* Arrow tip: rotated square — bottom half merges into the box below, no gap */}
+            <div
+              className="w-3 h-3 bg-[#1a1410] rotate-45 -mb-1.5 shrink-0"
+              style={{ zIndex: 10 }}
+            />
+            {/* Tooltip box */}
+            <div
+              className="bg-[#1a1410] text-white rounded-xl px-3 py-2.5 shadow-xl whitespace-nowrap"
+              style={{ zIndex: 20, position: "relative" }}
+            >
+              <p className="text-[11px] font-semibold leading-tight">{label}</p>
+              <p className="text-[10px] text-[#c8a86a] leading-tight mt-0.5">{desc}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 function SocialLinks() {
   return (
     <div className="flex items-center gap-1.5">
-      {SOCIAL_LINKS.map(({ Icon, href, label }, i) => (
-        <motion.a
-          key={label}
-          href={href}
-          target={href.startsWith("mailto") ? undefined : "_blank"}
-          rel="noopener noreferrer"
-          aria-label={label}
-          title={label}
-          initial={{ opacity: 0, scale: 0, rotate: -20 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{
-            type: "spring",
-            stiffness: 360,
-            damping: 18,
-            delay: 0.4 + i * 0.12,
-          }}
-          whileHover={{
-            scale: 1.3,
-            y: -4,
-            transition: { type: "spring", stiffness: 500, damping: 14 },
-          }}
-          whileTap={{ scale: 0.82 }}
-          className="w-8 h-8 flex items-center justify-center rounded-full
-                     text-[#9a7c5a] hover:text-[#c8974a] transition-colors duration-200"
-          style={{ willChange: "transform" }}
-        >
-          <Icon size={17} />
-        </motion.a>
+      {SOCIAL_LINKS.map(({ Icon, href, label, desc }, i) => (
+        <SocialTooltip key={label} label={label} desc={desc}>
+          <motion.a
+            href={href}
+            target={href.startsWith("mailto") ? undefined : "_blank"}
+            rel="noopener noreferrer"
+            aria-label={label}
+            initial={{ opacity: 0, scale: 0, rotate: -20 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 360,
+              damping: 18,
+              delay: 0.4 + i * 0.12,
+            }}
+            whileHover={{
+              scale: 1.3,
+              y: -4,
+              transition: { type: "spring", stiffness: 500, damping: 14 },
+            }}
+            whileTap={{ scale: 0.82 }}
+            className="w-8 h-8 flex items-center justify-center rounded-full
+                       text-[#9a7c5a] hover:text-[#c8974a] transition-colors duration-200"
+            style={{ willChange: "transform" }}
+          >
+            <Icon size={17} />
+          </motion.a>
+        </SocialTooltip>
       ))}
     </div>
   );
@@ -244,10 +286,10 @@ function SocialLinks() {
 
 // ── Rotating social button (cycles IG → YT → Twitch → Discord every 4s) ──────
 const ROTATING_SOCIALS = [
-  { Icon: FaInstagram, label: "Instagram", href: "https://www.instagram.com/jimraihann/" }, // ← update with your URL
-  { Icon: FaYoutube, label: "YouTube", href: "https://www.youtube.com/@Goemay11" }, // ← update with your URL
-  { Icon: FaTwitch, label: "Twitch", href: "#twitch" }, // ← update with your URL
-  { Icon: FaDiscord, label: "Discord", href: "#discord" }, // ← update with your URL
+  { Icon: FaInstagram, label: "Instagram", desc: "Follow my daily life", href: "https://www.instagram.com/jimraihann/" },
+  { Icon: FaYoutube, label: "YouTube", desc: "Watch my videos", href: "https://www.youtube.com/@Goemay11" },
+  { Icon: FaTwitch, label: "Twitch", desc: "Watch me live", href: "#twitch" },
+  { Icon: FaDiscord, label: "Discord", desc: "Chat with me", href: "#discord" },
 ];
 
 function RotatingSocial() {
@@ -305,22 +347,22 @@ function RotatingSocial() {
             exit={{ opacity: 0, x: -24, transition: { type: "spring", stiffness: 400, damping: 30 } }}
             transition={{ type: "spring", stiffness: 380, damping: 26 }}
           >
-            {ROTATING_SOCIALS.map(({ Icon, href, label }, i) => (
-              <motion.a
-                key={label}
-                href={href}
-                target={href.startsWith("#") ? undefined : "_blank"}
-                rel="noopener noreferrer"
-                aria-label={label}
-                title={label}
-                initial={{ opacity: 0, x: 16 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ type: "spring", stiffness: 400, damping: 22, delay: i * 0.08 }}
-                className={iconCls}
-                {...iconMotion}
-              >
-                <Icon size={17} />
-              </motion.a>
+            {ROTATING_SOCIALS.map(({ Icon, href, label, desc }, i) => (
+              <SocialTooltip key={label} label={label} desc={desc}>
+                <motion.a
+                  href={href}
+                  target={href.startsWith("#") ? undefined : "_blank"}
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  initial={{ opacity: 0, x: 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 22, delay: i * 0.08 }}
+                  className={iconCls}
+                  {...iconMotion}
+                >
+                  <Icon size={17} />
+                </motion.a>
+              </SocialTooltip>
             ))}
           </motion.div>
 
@@ -682,15 +724,24 @@ export default function AppV2() {
               {PROFILE.about}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
+              {/* Email button — opens mail client */}
               <a
                 href={`mailto:${PROFILE.email}`}
-                className="text-xs font-sans border border-[#d4c4ad] bg-white/80 px-4 py-2.5 rounded-full text-[#4a4030] hover:border-[#c8974a] hover:text-[#c8974a] transition-colors duration-200"
+                className="group flex flex-col items-start text-xs font-sans border border-[#d4c4ad] bg-white/80 px-4 py-2.5 rounded-2xl text-[#4a4030] hover:border-[#c8974a] hover:text-[#c8974a] transition-colors duration-200 cursor-pointer"
               >
-                {PROFILE.email}
+                <span className="font-medium leading-tight">{PROFILE.email}</span>
+                <span className="text-[10px] text-[#9a7c5a] group-hover:text-[#c8974a]/80 transition-colors leading-tight mt-0.5">✉ Send me an email</span>
               </a>
-              <span className="text-xs font-sans border border-[#d4c4ad] bg-white/80 px-4 py-2.5 rounded-full text-[#4a4030]">
-                {PROFILE.phone}
-              </span>
+              {/* WhatsApp button — opens WhatsApp chat */}
+              <a
+                href="https://wa.me/6282123207891"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col items-start text-xs font-sans border border-[#d4c4ad] bg-white/80 px-4 py-2.5 rounded-2xl text-[#4a4030] hover:border-[#25d366] hover:text-[#25d366] transition-colors duration-200 cursor-pointer"
+              >
+                <span className="font-medium leading-tight">{PROFILE.phone}</span>
+                <span className="text-[10px] text-[#9a7c5a] group-hover:text-[#25d366]/80 transition-colors leading-tight mt-0.5">💬 Message on WhatsApp</span>
+              </a>
             </div>
           </motion.div>
         </section>
