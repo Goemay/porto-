@@ -579,12 +579,99 @@ function CommitCalendar() {
   );
 }
 
+// ── End-of-scroll burst button ────────────────────────────────────────────────
+function EndBurstButton({ onReset }) {
+  const [phase, setPhase] = useState("idle"); // idle | burst | pulse
+
+  useEffect(() => {
+    // phase sequence: idle → burst (rings spin) → pulse (float)
+    const t = setTimeout(() => setPhase("burst"), 60);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (phase !== "burst") return;
+    const t = setTimeout(() => setPhase("pulse"), 700);
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  const handleClick = () => {
+    setPhase("idle");
+    onReset();
+  };
+
+  return (
+    <motion.div
+      key="end-burst"
+      initial={{ opacity: 0, scale: 0.3, rotate: -30 }}
+      animate={{ opacity: 1, scale: 1, rotate: 0 }}
+      exit={{ opacity: 0, scale: 0.2, rotate: 20, transition: { duration: 0.25 } }}
+      transition={{ type: "spring", stiffness: 320, damping: 18 }}
+      className="fixed bottom-24 right-8 z-50 flex items-center justify-center"
+      style={{ width: 96, height: 96 }}
+    >
+      {/* Orbital ring 1 */}
+      <motion.span
+        aria-hidden
+        className="absolute inset-0 rounded-full border-2 border-[#c8974a]/30"
+        animate={phase === "burst" || phase === "pulse"
+          ? { rotate: 360, scale: [1, 1.15, 1] }
+          : { rotate: 0 }}
+        transition={{ duration: 2.4, ease: "linear", repeat: Infinity }}
+      />
+      {/* Orbital ring 2 — opposite spin */}
+      <motion.span
+        aria-hidden
+        className="absolute rounded-full border border-[#c8974a]/20"
+        style={{ inset: 8 }}
+        animate={phase === "burst" || phase === "pulse"
+          ? { rotate: -360 }
+          : { rotate: 0 }}
+        transition={{ duration: 3.6, ease: "linear", repeat: Infinity }}
+      />
+      {/* Orbital dot */}
+      <motion.span
+        aria-hidden
+        className="absolute w-2 h-2 rounded-full bg-[#c8974a]"
+        style={{ top: 4, left: "50%", translateX: "-50%" }}
+        animate={phase === "burst" || phase === "pulse"
+          ? { rotate: [0, 360] }
+          : {}}
+        transition={{ duration: 2.4, ease: "linear", repeat: Infinity, transformOrigin: "50% 44px" }}
+      />
+
+      {/* Core button */}
+      <motion.button
+        onClick={handleClick}
+        animate={phase === "pulse"
+          ? { y: [0, -5, 0], boxShadow: ["0 4px 24px rgba(200,151,74,0.25)", "0 8px 36px rgba(200,151,74,0.55)", "0 4px 24px rgba(200,151,74,0.25)"] }
+          : {}}
+        transition={phase === "pulse" ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : {}}
+        whileHover={{ scale: 1.12, boxShadow: "0 0 40px rgba(200,151,74,0.7)" }}
+        whileTap={{ scale: 0.88 }}
+        className="relative w-16 h-16 rounded-full bg-[#c8974a] flex flex-col items-center justify-center shadow-[0_4px_24px_rgba(200,151,74,0.4)] cursor-pointer border-4 border-white"
+        title="Back to Start"
+      >
+        <motion.span
+          className="text-white text-lg leading-none"
+          animate={{ y: [0, -2, 0] }}
+          transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+        >
+          ↖
+        </motion.span>
+        <span className="text-white text-[9px] font-bold tracking-wider uppercase leading-none mt-0.5">Start</span>
+      </motion.button>
+    </motion.div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 export default function AppV2() {
   const scrollerRef = useRef(null);
   const dragStateRef = useRef({ isDown: false, startX: 0, scrollLeft: 0 });
   const wheelStateRef = useRef({ rafId: 0, pending: 0 });
   const [activeSection, setActiveSection] = useState(0);
+  const [isAtEnd, setIsAtEnd] = useState(false);
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 1024);
 
   // Detect desktop vs mobile/tablet
@@ -652,7 +739,7 @@ export default function AppV2() {
     };
   }, [isDesktop]);
 
-  // Track active section dot from scroll position
+  // Track active section dot + end-of-scroll detection
   useEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller || !isDesktop) return;
@@ -661,6 +748,8 @@ export default function AppV2() {
       const ratio = total > 0 ? scroller.scrollLeft / total : 0;
       const idx = Math.round(ratio * (SECTION_LABELS.length - 1));
       setActiveSection(idx);
+      // Show burst button when within 30px of the very end
+      setIsAtEnd(total > 0 && scroller.scrollLeft >= total - 30);
     };
     scroller.addEventListener("scroll", onScroll, { passive: true });
     return () => scroller.removeEventListener("scroll", onScroll);
@@ -868,6 +957,19 @@ export default function AppV2() {
         </section>
 
       </div>
+
+      {/* ── End-of-scroll burst button ── */}
+      <AnimatePresence>
+        {isDesktop && isAtEnd && (
+          <EndBurstButton
+            onReset={() => {
+              const s = scrollerRef.current;
+              if (s) s.scrollTo({ left: 0, behavior: "smooth" });
+              setIsAtEnd(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* ── Footer / Nav ── */}
       <footer className="shrink-0 px-6 md:px-10 py-5 flex items-center justify-between">
