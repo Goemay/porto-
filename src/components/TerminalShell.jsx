@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import BlinkingCursor from "./BlinkingCursor";
 import { parseCommand, AUTOCOMPLETE_LIST } from "../core/CommandParser";
+import PlaneShooter from "./games/PlaneShooter";
 
 const STORAGE_KEY = "porto_terminal_history_v1";
 
 export default function TerminalShell({ onShutdown }) {
   const inputRef = useRef(null);
   const scrollRef = useRef(null);
+  const hasTypedWelcome = useRef(false);
+
   const [input, setInput] = useState("");
   const [displayLines, setDisplayLines] = useState([]);
   const [history, setHistory] = useState(() =>
@@ -15,12 +18,17 @@ export default function TerminalShell({ onShutdown }) {
   const [histIndex, setHistIndex] = useState(null);
   const [suggestion, setSuggestion] = useState("");
   const [awaitingShutdownConfirm, setAwaitingShutdownConfirm] = useState(false);
+  const [activeGame, setActiveGame] = useState(null);
 
   useEffect(() => {
+    // Prevent double-rendering of the typing effect in React 18 Strict Mode
+    if (hasTypedWelcome.current) return;
+    hasTypedWelcome.current = true;
+
     const welcome = [
       { text: "Welcome to Porto-jim shell — type 'help' for commands", type: "info" },
       {
-        text: "Tip: try `about`, `work`, `projects`, `skills`, `contact`, `education`, `cv`, `joke`, `stack`, `jim`",
+        text: "Tip: try `about`, `work`, `projects`, `skills`, `contact`, `education`, `cv`, `joke`, `stack`, `jim`, `game`",
         type: "hint",
       },
     ];
@@ -37,7 +45,7 @@ export default function TerminalShell({ onShutdown }) {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [displayLines]);
+  }, [displayLines, activeGame]);
 
   const typeLinesSequentially = async (lines, delay) => {
     for (let l of lines) {
@@ -110,7 +118,16 @@ export default function TerminalShell({ onShutdown }) {
       return;
     }
 
-    const result = await parseCommand(cmd, { setThemeClass: applyTheme });
+    if (cmd === "shutdown -y") {
+      pushOutput([{ text: "Shutting down console...", type: "hint" }]);
+      setTimeout(() => onShutdown && onShutdown(), 800);
+      return;
+    }
+
+    const result = await parseCommand(cmd, {
+      setThemeClass: applyTheme,
+      startGame: (gameName) => setActiveGame(gameName)
+    });
 
     if (Array.isArray(result) && result.some((r) => r.type === "clear")) {
       setDisplayLines([]);
@@ -126,7 +143,41 @@ export default function TerminalShell({ onShutdown }) {
     document.documentElement.classList.toggle("dark", theme !== "light");
   };
 
+  const handleExitGame = (finalScore) => {
+    setActiveGame(null);
+    pushOutput([
+      { text: `Game exited. Final score: ${finalScore}`, type: "info" }
+    ]);
+    setTimeout(() => inputRef.current?.focus(), 100);
+  };
+
   const onKeyDown = (e) => {
+    // Ctrl + C (Cancel current command)
+    if (e.ctrlKey && e.key.toLowerCase() === "c") {
+      if (window.getSelection().toString()) return;
+      e.preventDefault();
+      pushOutput([{ text: `jim@porto:~$ ${input}^C`, type: "command" }]);
+      setInput("");
+      setSuggestion("");
+      setAwaitingShutdownConfirm(false);
+      return;
+    }
+
+    // Ctrl + L (Clear screen)
+    if (e.ctrlKey && e.key.toLowerCase() === "l") {
+      e.preventDefault();
+      setDisplayLines([]);
+      return;
+    }
+
+    // Ctrl + U (Clear current line input)
+    if (e.ctrlKey && e.key.toLowerCase() === "u") {
+      e.preventDefault();
+      setInput("");
+      setSuggestion("");
+      return;
+    }
+
     if (e.key === "Enter") {
       e.preventDefault();
       handleCommand(input);
@@ -188,68 +239,75 @@ export default function TerminalShell({ onShutdown }) {
 
         {/* Output Area */}
         <div
-          ref={scrollRef}
-          className="flex-1 border border-green-900 bg-black/70 rounded-md overflow-y-auto p-4"
-          style={{
-            backdropFilter: "blur(8px)",
-            minHeight: "400px",
-            maxHeight: "70vh",
-          }}
+          className="flex-1 border border-green-900 bg-black/70 rounded-md overflow-hidden flex flex-col"
+          style={{ backdropFilter: "blur(8px)", minHeight: "400px", maxHeight: "70vh" }}
         >
-          {displayLines.map((line, idx) => (
+          {activeGame === "plane" ? (
+            // === FULLSCREEN GAME MODE ===
+            <PlaneShooter onExit={handleExitGame} />
+          ) : (
+            // === NORMAL TERMINAL MODE ===
             <div
-              key={idx}
-              className={`${line.type === "command" ? "text-green-300" : ""} ${
-                line.type === "hint" ? "text-green-400 italic" : ""
-              }`}
+              ref={scrollRef}
+              className="flex-1 overflow-y-auto p-4 flex flex-col w-full h-full"
             >
-              {line.type === "link" ? (
-                <a
-                  href={line.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-green-300 underline"
-                >
-                  {line.text}
-                </a>
-              ) : (
-                <pre className="whitespace-pre-wrap font-mono">{line.text}</pre>
+              <div>
+                {displayLines.map((line, idx) => (
+                  <div
+                    key={idx}
+                    className={`${line.type === "command" ? "text-green-300" : ""} ${line.type === "hint" ? "text-green-400 italic" : ""
+                      }`}
+                  >
+                    {line.type === "link" ? (
+                      <a href={line.href} target="_blank" rel="noreferrer" className="hover:text-green-300 underline">
+                        {line.text}
+                      </a>
+                    ) : (
+                      <pre className="whitespace-pre-wrap font-mono">{line.text}</pre>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Input Line */}
+              <div className="flex items-center gap-3 mt-2">
+                <div className="text-green-300">jim@porto:~$</div>
+                <div className="flex-1 flex items-center">
+                  <input
+                    ref={inputRef}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={onKeyDown}
+                    className="bg-transparent outline-none flex-1 text-green-400 placeholder:text-green-800"
+                    placeholder="type command..."
+                    autoFocus
+                    spellCheck={false}
+                  />
+                  <BlinkingCursor />
+                </div>
+              </div>
+
+              {suggestion && (
+                <div className="text-xs text-green-700 mt-1">
+                  Suggestion:{" "}
+                  <span className="text-green-400">
+                    {input}
+                    <span className="text-green-200">{suggestion}</span>
+                  </span>
+                </div>
               )}
-            </div>
-          ))}
-
-          {/* Input Line */}
-          <div className="flex items-center gap-3 mt-2">
-            <div className="text-green-300">jim@porto:~$</div>
-            <div className="flex-1 flex items-center">
-              <input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={onKeyDown}
-                className="bg-transparent outline-none flex-1 text-green-400 placeholder:text-green-800"
-                placeholder="type command..."
-                autoFocus
-                spellCheck={false}
-              />
-              <BlinkingCursor />
-            </div>
-          </div>
-
-          {suggestion && (
-            <div className="text-xs text-green-700 mt-1">
-              Suggestion:{" "}
-              <span className="text-green-400">
-                {input}
-                <span className="text-green-200">{suggestion}</span>
-              </span>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="mt-4 text-xs text-green-500 flex justify-between">
-          <div>↑/↓ history • Tab autocomplete • Enter run • clear/shutdown</div>
+        <div className="mt-4 text-xs text-green-500 flex flex-col md:flex-row justify-between gap-2">
+          <div className="flex gap-4">
+            <span>↑/↓ history</span>
+            <span>Tab autocomplete</span>
+            <span>Ctrl+C cancel</span>
+            <span>Ctrl+L clear</span>
+          </div>
           <div className="opacity-70">Click anywhere to focus</div>
         </div>
       </div>

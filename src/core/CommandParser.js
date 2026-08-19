@@ -15,27 +15,29 @@ export const AUTOCOMPLETE_LIST = [
   "joke",
   "stack",
   "jim",
+  "game" // Added game to autocomplete
 ];
 
 // ── Command handlers ──────────────────────────────────────────────────────────
 const COMMANDS = {
   clear: () => [{ text: "", type: "clear" }],
-  cls:   () => [{ text: "", type: "clear" }],
+  cls: () => [{ text: "", type: "clear" }],
 
   help: () => [
     { text: "Available commands:", type: "hint" },
-    { text: "  about      — personal bio & current role",      type: "stdout" },
-    { text: "  work       — full work history",                type: "stdout" },
-    { text: "  projects   — list featured projects",           type: "stdout" },
-    { text: "  skills     — list technical skills",            type: "stdout" },
-    { text: "  education  — education history",                type: "stdout" },
-    { text: "  contact    — show contact info",                type: "stdout" },
-    { text: "  cv         — open Jim's CV (PDF)",              type: "stdout" },
-    { text: "  joke       — get a random programmer joke",     type: "stdout" },
-    { text: "  stack      — tech stack of this project",       type: "stdout" },
-    { text: "  jim        — display Jim ASCII art",            type: "stdout" },
-    { text: "  clear      — clear console",                    type: "stdout" },
-    { text: "  shutdown   — exit terminal",                    type: "stdout" },
+    { text: "  about      — personal bio & current role", type: "stdout" },
+    { text: "  work       — full work history", type: "stdout" },
+    { text: "  projects   — list featured projects", type: "stdout" },
+    { text: "  skills     — list technical skills", type: "stdout" },
+    { text: "  education  — education history", type: "stdout" },
+    { text: "  contact    — show contact info", type: "stdout" },
+    { text: "  cv         — open Jim's CV (PDF)", type: "stdout" },
+    { text: "  joke       — get a random programmer joke", type: "stdout" },
+    { text: "  stack      — tech stack of this project", type: "stdout" },
+    { text: "  jim        — display Jim ASCII art", type: "stdout" },
+    { text: "  game       — play terminal mini-games", type: "stdout" },
+    { text: "  clear      — clear console", type: "stdout" },
+    { text: "  shutdown   — exit terminal", type: "stdout" },
     { text: "", type: "stdout" },
     { text: "Tip: use Tab to autocomplete, ↑↓ for history", type: "hint" },
   ],
@@ -127,11 +129,11 @@ const COMMANDS = {
   contact: () => [
     { text: "Contact Info:", type: "hint" },
     { text: "", type: "stdout" },
-    { text: "  Email  : raihangumay02@gmail.com",    type: "stdout" },
-    { text: "  Phone  : (+62) 821 2320 7891",         type: "stdout" },
-    { text: "  GitHub : https://github.com/Goemay",  type: "link", href: "https://github.com/Goemay" },
+    { text: "  Email  : raihangumay02@gmail.com", type: "stdout" },
+    { text: "  Phone  : (+62) 821 2320 7891", type: "stdout" },
+    { text: "  GitHub : https://github.com/Goemay", type: "link", href: "https://github.com/Goemay" },
     { text: "  LinkedIn : https://linkedin.com/in/jim-raihan", type: "link", href: "https://www.linkedin.com/in/jim-raihan/" },
-    { text: "  Portfolio : https://jimraihan.my.id",  type: "link", href: "https://jimraihan.my.id" },
+    { text: "  Portfolio : https://jimraihan.my.id", type: "link", href: "https://jimraihan.my.id" },
   ],
 
   cv: () => [
@@ -142,7 +144,7 @@ const COMMANDS = {
 
   joke: async () => {
     try {
-      const res  = await fetch("https://v2.jokeapi.dev/joke/Programming,Miscellaneous?safe-mode");
+      const res = await fetch("https://v2.jokeapi.dev/joke/Programming,Miscellaneous?safe-mode");
       const data = await res.json();
       const joke = data.type === "single"
         ? data.joke
@@ -158,10 +160,10 @@ const COMMANDS = {
     { text: "", type: "stdout" },
     { text: "  ⚛  React 18       — component-based UI rendering", type: "stdout" },
     { text: "  ⚡  Vite 7        — ultra-fast dev server & bundler", type: "stdout" },
-    { text: "  🎨  Tailwind CSS   — utility-first styling", type: "stdout" },
-    { text: "  🎞  Framer Motion  — spring-based animations", type: "stdout" },
-    { text: "  🔣  React Icons    — icon library", type: "stdout" },
-    { text: "  📦  gh-pages       — GitHub Pages deployment", type: "stdout" },
+    { text: "  🎨  Tailwind CSS  — utility-first styling", type: "stdout" },
+    { text: "  🎞  Framer Motion — spring-based animations", type: "stdout" },
+    { text: "  🔣  React Icons   — icon library", type: "stdout" },
+    { text: "  📦  gh-pages      — GitHub Pages deployment", type: "stdout" },
     { text: "", type: "stdout" },
     { text: "  Repo: https://github.com/Goemay/porto-", type: "link", href: "https://github.com/Goemay/porto-" },
   ],
@@ -169,9 +171,9 @@ const COMMANDS = {
   jim: () => [
     {
       text: `
-     ██╗██╗███╗   ███╗
-     ██║██║████╗ ████║
-     ██║██║██╔████╔██║
+      ██╗██╗███╗   ███╗
+      ██║██║████╗ ████║
+      ██║██║██╔████╔██║
 ██   ██║██║██║╚██╔╝██║
 ╚█████╔╝██║██║ ╚═╝ ██║
  ╚════╝ ╚═╝╚═╝     ╚═╝`,
@@ -181,6 +183,33 @@ const COMMANDS = {
     { text: "  Powered by React + Vite + Tailwind CSS", type: "stdout" },
   ],
 
+  // Integrated game command
+  game: (args, options) => {
+    const gameChoice = args[1]?.toLowerCase();
+
+    // If no game is specified, show the menu
+    if (!gameChoice) {
+      return [
+        { text: "Available games:", type: "info" },
+        { text: "  1. tetris (Coming soon)", type: "stdout" },
+        { text: "  2. mario  (Coming soon)", type: "stdout" },
+        { text: "  3. plane  (Playable!)", type: "stdout" },
+        { text: "", type: "stdout" },
+        { text: "Type 'game <number/name>' to play. Example: 'game 3' or 'game plane'", type: "hint" }
+      ];
+    }
+
+    // Launch Plane Shooter
+    if (gameChoice === "3" || gameChoice === "plane") {
+      if (options.startGame) {
+        options.startGame("plane");
+      }
+      return [{ text: "Launching Plane Shooter...", type: "info" }];
+    }
+
+    return [{ text: `Game '${gameChoice}' not found. Type 'game' to see the list.`, type: "stdout" }];
+  },
+
   shutdown: () => [
     { text: "Preparing to exit terminal...", type: "stdout" },
   ],
@@ -188,7 +217,10 @@ const COMMANDS = {
 
 // ── Main parser ───────────────────────────────────────────────────────────────
 export async function parseCommand(raw, options = {}) {
-  const cmd = raw.trim().toLowerCase();
+  // Split the raw string into an array so we can access arguments (e.g., args[1] for the game command)
+  const args = raw.trim().split(" ");
+  const cmd = args[0].toLowerCase();
+
   if (!cmd) return [{ text: "", type: "stdout" }];
 
   const handler = COMMANDS[cmd];
@@ -199,5 +231,6 @@ export async function parseCommand(raw, options = {}) {
     ];
   }
 
-  return await handler(options);
+  // Pass both the split arguments and the options (context) down to the handler
+  return await handler(args, options);
 }

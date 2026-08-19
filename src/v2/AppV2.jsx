@@ -6,12 +6,12 @@ import { MdEmail } from "react-icons/md";
 // ── Static data (outside component — no useMemo needed) ───────────────────────
 const PROFILE = {
   name: "Jim Raihan Gumay",
-  role: "IT Support & Full-Stack Developer",
+  role: "Software & DevOps Engineer",
   location: "Cikarang Selatan, Kab Bekasi",
   email: "raihangumay02@gmail.com",
   phone: "(+62) 821 2320 7891",
   about:
-    "Born in 2003, raised in South Cikarang. Competitive by nature and drawn to RPG games because they push me to explore, learn, and improve. That same drive fuels my professional growth.",
+    "IT professional with 1+ years of experience in software development and DevOps."
 };
 
 const CAREER = [
@@ -90,6 +90,15 @@ const EDUCATION = [
 ];
 
 const PROJECTS = [
+  {
+    year: "2026",
+    name: "Automation scanning log system",
+    org: "Cnaindo tech",
+    bullets: [
+      "making an scipt that can tracing error, Make Troublshoot easier",
+      "Using linux command with parsing data using python to Send Spreadsheet",
+    ],
+  },
   {
     year: "2025",
     name: "Bootcamp ERP with Epicor",
