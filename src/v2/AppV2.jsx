@@ -822,7 +822,7 @@ export default function AppV2() {
       <div
         ref={scrollerRef}
         className={`v2-scroller ${isDesktop
-          ? "flex flex-1 overflow-x-auto overflow-y-hidden cursor-grab active:cursor-grabbing"
+          ? "flex flex-1 overflow-x-auto overflow-y-hidden"
           : "flex flex-col overflow-x-hidden"
           }`}
         style={{ overscrollBehaviorX: "contain" }}

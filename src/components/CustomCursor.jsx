@@ -54,7 +54,7 @@ export default function CustomCursor() {
 
       {/* Big Ball */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference flex items-center justify-center"
+        className="fixed top-0 left-0 pointer-events-none z-[9999] flex items-center justify-center drop-shadow-md"
         style={{
           x: bigCursorX,
           y: bigCursorY,
@@ -67,13 +67,13 @@ export default function CustomCursor() {
         transition={{ duration: 0.3 }}
       >
         <svg height="30" width="30">
-          <circle cx="15" cy="15" r="12" strokeWidth="0" fill="#f7f8fa" />
+          <circle cx="15" cy="15" r="12" strokeWidth="1.5" stroke="rgba(0,0,0,0.15)" fill="#f7f8fa" />
         </svg>
       </motion.div>
 
       {/* Small Ball */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[10000] mix-blend-difference flex items-center justify-center"
+        className="fixed top-0 left-0 pointer-events-none z-[10000] flex items-center justify-center drop-shadow-sm"
         style={{
           x: smallCursorX,
           y: smallCursorY,
@@ -82,7 +82,7 @@ export default function CustomCursor() {
         }}
       >
         <svg height="10" width="10">
-          <circle cx="5" cy="5" r="4" strokeWidth="0" fill="#f7f8fa" />
+          <circle cx="5" cy="5" r="4" strokeWidth="1" stroke="rgba(0,0,0,0.2)" fill="#c8974a" />
         </svg>
       </motion.div>
     </>
