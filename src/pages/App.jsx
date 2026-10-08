@@ -8,7 +8,7 @@ import MatrixBackground from "../components/MatrixBackground";
 // ── Static data ───────────────────────────────────────────────────────────────
 const EXPERIENCE = [
   {
-    title: "Junior Software Engineer",
+    title: "Software Engineer",
     company: "PT Cnaindo TCT",
     time: "Oct 2025 – Present",
     desc: "Server administration and application development. Automation and database management for internal tools. Working with Linux and XML workflows.",
@@ -34,14 +34,14 @@ const EXPERIENCE = [
 ];
 
 const CONTACTS = [
-  { Icon: MdEmail,    link: "mailto:raihangumay02@gmail.com", label: "Email"    },
-  { Icon: FaGithub,   link: "https://github.com/Goemay",      label: "GitHub"   },
+  { Icon: MdEmail, link: "mailto:raihangumay02@gmail.com", label: "Email" },
+  { Icon: FaGithub, link: "https://github.com/Goemay", label: "GitHub" },
   { Icon: FaLinkedin, link: "https://linkedin.com/in/jim-raihan", label: "LinkedIn" },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const [showConsole, setShowConsole]   = useState(false);
+  const [showConsole, setShowConsole] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {

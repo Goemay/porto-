@@ -191,7 +191,7 @@ npm run deploy
 ## 👨‍💻 Author
 
 **Jim Raihan Gumay**  
-💼 Junior Software Engineer | IT Support | Full-Stack Developer  
+💼 Software Engineer | IT Support | Full-Stack Developer  
 📧 [raihangumay02@gmail.com](mailto:raihangumay02@gmail.com)  
 🔗 [LinkedIn](https://www.linkedin.com/in/jim-raihan/)  
 🐙 [GitHub](https://github.com/Goemay)  

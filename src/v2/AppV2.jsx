@@ -17,7 +17,7 @@ const PROFILE = {
 const CAREER = [
   {
     year: "Oct 2025 – Present",
-    title: "Junior Software Engineer",
+    title: "Software Engineer",
     org: "PT Cnaindo TCT",
     type: "Full-time",
     location: "CEO Suite, AXA Tower · Hybrid",
@@ -876,6 +876,16 @@ export default function AppV2() {
               >
                 <span className="font-medium leading-tight">{PROFILE.phone}</span>
                 <span className="text-[10px] text-[#9a7c5a] group-hover:text-[#25d366]/80 transition-colors leading-tight mt-0.5">💬 Message on WhatsApp</span>
+              </a>
+              {/* CV button — opens CV */}
+              <a
+                href="/CV_JImraihan (Eng).pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col items-start text-xs font-sans border border-[#d4c4ad] bg-white/80 px-4 py-2.5 rounded-2xl text-[#4a4030] hover:border-[#c8974a] hover:text-[#c8974a] transition-colors duration-200 cursor-pointer"
+              >
+                <span className="font-medium leading-tight">Curriculum Vitae</span>
+                <span className="text-[10px] text-[#9a7c5a] group-hover:text-[#c8974a]/80 transition-colors leading-tight mt-0.5">📄 View / Download CV</span>
               </a>
             </div>
           </motion.div>

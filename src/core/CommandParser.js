@@ -44,7 +44,7 @@ const COMMANDS = {
 
   about: () => [
     { text: "Jim Raihan Gumay", type: "hint" },
-    { text: "  Role      : Junior Software Engineer & Full-Stack Developer", type: "stdout" },
+    { text: "  Role      : Software Engineer & Full-Stack Developer", type: "stdout" },
     { text: "  Company   : PT Cnaindo TCT (Oct 2025 – Present)", type: "stdout" },
     { text: "  Location  : Cikarang Selatan, Kab Bekasi, Jawa Barat", type: "stdout" },
     { text: "  Born      : 2003", type: "stdout" },
@@ -57,7 +57,7 @@ const COMMANDS = {
   work: () => [
     { text: "Work History:", type: "hint" },
     { text: "", type: "stdout" },
-    { text: "  [Oct 2025 – Present]  Junior Software Engineer", type: "stdout" },
+    { text: "  [Oct 2025 – Present]  Software Engineer", type: "stdout" },
     { text: "  PT Cnaindo TCT · Full-time · Hybrid (AXA Tower)", type: "stdout" },
     { text: "  → Server administration & application development", type: "stdout" },
     { text: "  → Automation & database management for internal tools", type: "stdout" },

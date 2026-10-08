@@ -8,7 +8,7 @@ const FRAME_RATE_MS = Math.floor(1000 / FPS);
 
 export default function PlaneShooter({ onExit }) {
     const gameState = useRef({
-        playerX: Math.floor(WIDTH / 2),
+        playerX: Math.floor(WIDTH / 100),
         bullets: [],
         enemies: [],
         score: 0,
@@ -31,11 +31,24 @@ export default function PlaneShooter({ onExit }) {
                 return;
             }
 
+            // --- PROGRESSIVE DIFFICULTY MATH ---
+            // 1. Calculate Difficulty: +1 every 100 points, max capped at 10
+            const difficulty = Math.min(10, 1 + Math.floor(state.score / 100));
+
+            // 2. Scaling factor: Scales from 0 (at diff 1) to 2 (at diff 10)
+            const difficultyScale = (difficulty - 1) * (2 / 9);
+
+            // 3. Apply to Speed and Max Enemies
+            const enemySpeed = 0.15 + difficultyScale;
+            const maxEnemies = 4 + Math.round(difficultyScale);
+            const spawnRate = 0.05 + (difficulty * 0.01);
+            // -----------------------------------
+
             // Smooth continuous movement based on input state
             if (state.keys.left) state.playerX = Math.max(0, state.playerX - 0.6);
             if (state.keys.right) state.playerX = Math.min(WIDTH - 1, state.playerX + 0.6);
 
-            // Auto-fire capability when holding the shoot button (1 shot every 200ms)
+            // Auto-fire capability
             if (state.keys.shoot) {
                 const now = Date.now();
                 if (now - state.lastShot > 200) {
@@ -44,26 +57,39 @@ export default function PlaneShooter({ onExit }) {
                 }
             }
 
-            // Move Bullets
+            // Move Bullets (THIS WAS MISSING!)
             state.bullets = state.bullets
                 .map((b) => ({ ...b, y: b.y - 1.0 }))
                 .filter((b) => b.y > -1);
 
-            // Move Enemies
+            // Move Enemies (Tracker enemies drift towards player)
             state.enemies = state.enemies
-                .map((e) => ({ ...e, y: e.y + 0.15 }))
+                .map((e) => {
+                    let nextX = e.x;
+                    if (e.isTracker) {
+                        if (nextX < state.playerX) nextX += 0.1;
+                        if (nextX > state.playerX) nextX -= 0.1;
+                    }
+                    return { ...e, x: nextX, y: e.y + enemySpeed };
+                })
                 .filter((e) => e.y < HEIGHT);
 
-            // Random Enemy Spawning
-            if (Math.random() < 0.05) {
-                state.enemies.push({ x: Math.floor(Math.random() * WIDTH), y: 0 });
+            // Random Enemy Spawning (1 in 20 chance to be a tracker)
+            if (state.enemies.length < maxEnemies && Math.random() < spawnRate) {
+                state.enemies.push({
+                    x: Math.floor(Math.random() * WIDTH),
+                    y: 0,
+                    isTracker: Math.random() < 0.05
+                });
             }
 
             // Collision Detection
             const survivingBullets = [];
             state.bullets.forEach((bullet) => {
                 const hitIndex = state.enemies.findIndex(
-                    (enemy) => Math.floor(bullet.x) === enemy.x && Math.abs(bullet.y - enemy.y) < 1.0
+                    (enemy) =>
+                        Math.floor(bullet.x) === Math.floor(enemy.x) &&
+                        Math.abs(bullet.y - enemy.y) < (1.0 + enemySpeed)
                 );
 
                 if (hitIndex !== -1) {
@@ -78,7 +104,7 @@ export default function PlaneShooter({ onExit }) {
             // Game Over Detection
             const playerHit = state.enemies.some(
                 (enemy) =>
-                    enemy.x === Math.floor(state.playerX) && Math.floor(enemy.y) >= HEIGHT - 1
+                    Math.floor(enemy.x) === Math.floor(state.playerX) && Math.floor(enemy.y) >= HEIGHT - 1
             );
 
             if (playerHit) {
@@ -131,7 +157,10 @@ export default function PlaneShooter({ onExit }) {
 
     enemies.forEach((e) => {
         const renderY = Math.floor(e.y);
-        if (renderY >= 0 && renderY < HEIGHT) screen[renderY][e.x] = "V";
+        const renderX = Math.floor(e.x);
+        if (renderY >= 0 && renderY < HEIGHT && renderX >= 0 && renderX < WIDTH) {
+            screen[renderY][renderX] = e.isTracker ? "T" : "V";
+        }
     });
 
     bullets.forEach((b) => {
@@ -148,7 +177,9 @@ export default function PlaneShooter({ onExit }) {
 
             {/* Top Header */}
             <div className="mb-2 flex justify-between w-full max-w-md px-2">
-                <span className="font-bold text-yellow-400">SCORE: {score}</span>
+                <span className="font-bold text-yellow-400">
+                    SCORE: {score} <span className="text-gray-400 text-xs ml-2">LVL {Math.min(10, 1 + Math.floor(score / 100))}</span>
+                </span>
                 <span className="text-xs text-green-600 hidden sm:block">
                     [<span className="text-white">←</span>/
                     <span className="text-white">→</span>] Move &nbsp; [
@@ -171,7 +202,7 @@ export default function PlaneShooter({ onExit }) {
                             {row.map((cell, j) => (
                                 // Adjusted cell sizing so it fits neatly on small portrait phones
                                 <span key={j} className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center whitespace-pre font-bold">
-                                    {cell === "V" ? <span className="text-red-500">V</span> : cell}
+                                    {cell === "V" ? <span className="text-red-500">V</span> : cell === "T" ? <span className="text-orange-500">T</span> : cell}
                                 </span>
                             ))}
                         </div>
